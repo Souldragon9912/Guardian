@@ -25,7 +25,7 @@ fi
 
 # 5. Create the new global symbolic link
 echo "-> Creating global command..."
-ln -s "$INSTALL_DIR/guardian.sh" /usr/local/bin/guardian
+ln -s "$INSTALL_DIR/Guardian.sh" /usr/local/bin/guardian
 
 echo -e "\e[1;32m✅ Installation Complete!\e[0m"
 echo "You can now type 'guardian' from anywhere in your terminal."
