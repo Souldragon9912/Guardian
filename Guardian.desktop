@@ -1,0 +1,12 @@
+#!/usr/bin/env xdg-open
+[Desktop Entry]
+Type=Application
+Name=Terminal-Tutor
+Comment=Beginner-friendly Linux tools
+Exec=bash -c 'DIR="$(cd "$(dirname "$1")" && pwd)"; "$DIR/.Guardian.sh"; exec bash' _ %k
+Icon=/home/brendan/Downloads/Guardian/icons/Guardian.png
+Terminal=true
+Categories=Utility;
+
+
+USER_NAME="${USER:-$(whoami)}"
