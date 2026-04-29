@@ -30,13 +30,17 @@ sudo apt update && sudo apt install fzf dialog
 Guardian includes an automated installation script that sets execution permissions, creates a global symlink, and registers the desktop icon.
 
 1. Clone the repository:
-\`\`\`bash
+\`\`\`
 git clone https://github.com/Souldragon9912/Guardian.git
+\`\`\`
+3. Move to the Directory
 cd Guardian
 \`\`\`
-2. Run the installer with elevated privileges:
-\`\`\`bash
+4. Make sure install.sh can be executed:
+\`\`\`
 chmod +x install.sh
+\`\`\`
+5. Execute the install script
 sudo ./install.sh
 \`\`\`
 
