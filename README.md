@@ -21,7 +21,7 @@ Guardian requires the following packages to run the interactive dashboard:
 * `dialog` (For secondary UI elements)
 
 On Debian/Ubuntu-based systems, install dependencies via:
-\`\`\`bash
+\`\`\`
 sudo apt update && sudo apt install fzf dialog
 \`\`\`
 
@@ -30,19 +30,21 @@ sudo apt update && sudo apt install fzf dialog
 Guardian includes an automated installation script that sets execution permissions, creates a global symlink, and registers the desktop icon.
 
 1. Clone the repository:
-\`\`\`
+
 git clone https://github.com/Souldragon9912/Guardian.git
-\`\`\`
+
 3. Move to the Directory
+
 cd Guardian
-\`\`\`
-4. Make sure install.sh can be executed:
-\`\`\`
+
+6. Make sure install.sh can be executed:
+
 chmod +x install.sh
-\`\`\`
+
 5. Execute the install script
+
 sudo ./install.sh
-\`\`\`
+
 
 ## 💻 Usage
 
