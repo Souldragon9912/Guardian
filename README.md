@@ -1,4 +1,4 @@
-# 🛡️ Guardian Security Suite
+# 🛡️ Guardian Suite
 
 Guardian is a custom-built, interactive terminal dashboard designed for rapid system diagnostics, user auditing, and network troubleshooting in Debain distros. 
 
