@@ -216,6 +216,49 @@ echo -e "\n${cyan}[*] Identifying listening network services...${nc}"
 # -t (tcp) -u (udp) -l (listening) -p (process) -n (numeric)
 ss -tulpn | grep LISTEN | tee -a "$LOG_FILE"
 
+# ======================== CVE Check ===========================
+
+# ----- DB update section ------
+DB_DIR=$HOME/.cache/guardian/cve-tracker
+
+echo "Syncing Ubuntu CVE Database..."
+if [-d "$DB_DIR/.git"]; then
+    cd "$DB_DIR" && git pull
+else
+    mkdir -p "$DB_DIR"
+    git clone --depth 1 https://github.com/canonical/ubuntu-cve-tracker.git "$DB_DIR"
+fi
+
+echo "[✔] Database is now up to date."
+# ------ DB Scan section ------
+DB_DIR="$HOME/.cache/guardian/cve-tracker"
+
+echo "Cataloging installed packages..."
+dpkg-query -W -f='${Package}\n' > /tmp/installed_pkgs.txt
+
+echo "🔍 Scanning for known vulnerabilities..."
+
+while read PKG; do
+    # We search the 'active' and 'retired' directories in the tracker
+    # Looking for filenames that match the package name
+    FOUND=$(find "$DB_DIR/active" "$DB_DIR/retired" -name "CVE-*-${PKG}" 2>/dev/null)
+
+    if [ ! -z "$FOUND" ]; then
+        echo -e "\e[1;31m⚠️  Vulnerability found in: $PKG\e[0m"
+        # Extract the CVE ID from the file path
+        basename $FOUND
+    fi
+done < /tmp/installed_pkgs.txt
+
+for FILE in $FOUND; do
+    SEVERITY=$(grep "Priority:" "$FILE" | awk '{print $2}')
+    if [[ "$SEVERITY" == "high" || "$SEVERITY" == "critical" ]]; then
+        echo "[!!!]$PKG - SEVERITY: ${SEVERITY^^}"
+        grep "Description:" "$FILE" | head -n 1
+    fi
+done
+# ------------------------- CVE Section Complete --------------------------------------
+
 sleep 1
 echo " Thank you for using the system auditor!"
-exit 1
+

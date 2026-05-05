@@ -84,8 +84,8 @@ EXIT  : Shutdown Guardian"
 
     # --- 6. Route the Choice ---
     case "$CHOICE" in
-        "G-SEC")  clear; sudo bash /home/brendan/Downloads/Guardian/scripts/G-Sec.sh; read -n 1 -s -r -p "Press any key to return...";;
-        "G-PASS") clear; bash /home/brendan/Downloads/Guardian/scripts/G-pass.sh; read -n 1 -s -r -p "Press any key to return...";;
+        "G-SEC")  clear; sudo ~/Guardian/scripts/G-Sec.sh; read -n 1 -s -r -p "Press any key to return...";;
+        "G-PASS") clear; bash ~/Guardian/scripts/G-pass.sh; read -n 1 -s -r -p "Press any key to return...";;
         "G-TOP")  clear; ./g-top.sh;;
         "G-NET")  clear; ./g-net.sh; read -n 1 -s -r -p "Press any key to return...";;
         "EXIT"|"") clear; echo "Guardian offline."; exit 0;;

@@ -112,5 +112,3 @@ else
     echo "${red}""{!!} PASSWD CHECK RESULT: Your password did not meed one or more guidelines. Please make changes soon. ($SCORE/4)""${nc}" | tee -a Audit-log.txt
 fi
 
-sleep 2
-exit 1
