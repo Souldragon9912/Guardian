@@ -4,11 +4,24 @@
 
 echo -e "\e[1;36m🛡️  Installing Guardian Security Suite...\e[0m"
 
-# 1. Check for root privileges (required to write to /usr/local/bin)
-if [ "$EUID" -ne 0 ]; then
-  echo "Please run this installer with sudo: sudo ./install.sh"
-  exit 1
-fi
+sleep 2
+
+
+ #   Clone the repository:
+
+git clone https://github.com/Souldragon9912/Guardian.git
+
+ #   Move to the Directory
+
+cd Guardian
+
+ #   Make sure install.sh can be executed:
+
+chmod +x install.sh
+
+ #   Execute the install script
+
+sudo ./install.sh
 
 # 2. Get the absolute path of the directory the installer is in
 INSTALL_DIR="$(dirname "$(realpath "$0")")"
