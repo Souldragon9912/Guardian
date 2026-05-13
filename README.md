@@ -51,13 +51,11 @@ sudo ./install.sh
 
 ## one-liner (expiremental)
 This is a new one-liner to get the install going. if its not working, please let us know.
-\`\`\`
+
+
 curl -fsSL https://raw.githubusercontent.com/Souldragon9912/Guardian/main/install.sh | bash
-\`\`\`
+
+
 ## 💻 Usage
 
-Once installed, you can launch the suite from any terminal directory by simply typing:
-\`\`\`bash
-guardian
-\`\`\`
-Alternatively, if you are using a desktop environment, search for **Guardian** in your application launcher.
+Once installed you should have the application show up in your applications menu or the actual command should be working and you'll just be able to type in guardian and launch it in the terminal 
