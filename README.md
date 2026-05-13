@@ -51,9 +51,9 @@ sudo ./install.sh
 
 ## one-liner (expiremental)
 This is a new one-liner to get the install going. if its not working, please let us know.
-|
+\`\`\`
 curl -fsSL https://raw.githubusercontent.com/Souldragon9912/Guardian/main/install.sh | bash
-|
+\`\`\`
 ## 💻 Usage
 
 Once installed, you can launch the suite from any terminal directory by simply typing:
