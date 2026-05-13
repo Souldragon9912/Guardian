@@ -106,13 +106,11 @@
         <p class="description">Core Security Modules</p>
         
         <h3>System Auditor</h3>
-        <p>Checks for misconfigured permissions (SUID/SGID), exposed network ports, and unauthorized background services.</p>
-
-        <h3>CVE Checker</h3>
-        <p>Scans installed system packages against known vulnerability databases to identify required security patches.</p>
-
-        <h3>Password Strength Tester</h3>
-        <p>Evaluates credential complexity and system-wide password policies to defend against brute-force attacks.</p>
+        <p>The Guardian Suite is intended to be used as a security and hardware tool to perform many different tasks. Each of can range from the following: 
+G-Passwd: this scans the user's password and compares it to NIST guidelines, specifically SP800-63B.
+ G-Sec audit SSH configurations: This will search for an SSH config file and read it to determine if root access is defined Yes or No. If it is allowed it will be strongly encouraged to deny it. 
+UID Check: user ID checks that will scan all accounts to find those with a userID or UID of 0. Aside from the root user no other users on the system should typically have this level of authority. In the event of another user having a UID of 0, that could signify potential privilege escalation. Therefore action will be recommended to be taken.
+</p>
     </section>
 
     <section id="installation">
