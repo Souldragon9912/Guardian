@@ -6,22 +6,6 @@ echo -e "🛡️  Installing Guardian Security Suite..."
 
 sleep 2
 
-#    Clone the repository:
-
-git clone https://github.com/Souldragon9912/Guardian.git
-
-#    Move to the Directory
-
-cd Guardian
-
-#    Make sure install.sh can be executed:
-
-chmod +x install.sh
-
-#    Execute the install script
-
-sudo ./install.sh
-
 # 2. Get the absolute path of the directory the installer is in
 INSTALL_DIR="$(dirname "$(realpath "$0")")"
 
