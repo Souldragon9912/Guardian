@@ -6,7 +6,10 @@ echo -e "🛡️  Installing Guardian Security Suite..."
 
 sleep 2
 
+<<<<<<< HEAD:G-installer.sh
 
+=======
+>>>>>>> 38e5f0d97d0288f6de210130218d7068d33bf4f6:install.sh
 # 2. Get the absolute path of the directory the installer is in
 INSTALL_DIR="$(dirname "$(realpath "$0")")"
 
@@ -22,7 +25,7 @@ fi
 
 # 5. Create the new global symbolic link
 echo "-> Creating global command..."
-ln -s "$INSTALL_DIR/Guardian.sh" /usr/local/bin/guardian
+sudo ln -s "$INSTALL_DIR/Guardian.sh" /usr/local/bin/guardian
 
 echo -e "[✔] Installation Complete!"
 echo "You can now type 'guardian' from anywhere in your terminal."
@@ -46,6 +49,7 @@ if [ -f "$INSTALL_DIR/Guardian.desktop" ]; then
     fi
 fi
 
+<<<<<<< HEAD:G-installer.sh
 # --- Dependency Check & Installation ---
 echo "[*] Verifying system dependencies..."
 
@@ -74,5 +78,7 @@ echo "[*] All dependencies verified."
 echo ""
 sleep 4
 
+=======
+>>>>>>> 38e5f0d97d0288f6de210130218d7068d33bf4f6:install.sh
 echo -e "[✔] Installation Complete!"
 

@@ -31,7 +31,7 @@ sudo apt update && sudo apt install fzf dialog
 
 ## 🚀 Installation
 
-Guardian includes an automated installation script that sets execution permissions, creates a global symlink, and registers the desktop icon. I understand it is annoying to do this manually, I am trying to set it up so it runs automatically. For now, this is the best way because it works best. An uninstall script will be comming soon and packaged with the installer.
+Guardian includes an automated installation script that sets execution permissions, creates a global symlink, and registers the desktop icon. I understand it is annoying to do this manually, I am trying to set it up so it runs automatically. For now, this is the best way because it works best. An uninstall script will be comming soon and packaged with everything. during testing, it kinda nuked my downloads dir. so, it will be a bit before that's released.
 
 1. Clone the repository:
 
@@ -49,11 +49,13 @@ chmod +x install.sh
 
 sudo ./install.sh
 
+## one-liner (expiremental)
+This is a new one-liner to get the install going. if its not working, please let us know.
+
+
+git clone https://github.com/Souldragon9912/Guardian.git && cd Guardian && sudo ./install.sh
+
 
 ## 💻 Usage
 
-Once installed, you can launch the suite from any terminal directory by simply typing:
-\`\`\`bash
-guardian
-\`\`\`
-Alternatively, if you are using a desktop environment, search for **Guardian** in your application launcher.
+Once installed you should have the application show up in your applications menu or the actual command should be working and you'll just be able to type in guardian and launch it in the terminal 
