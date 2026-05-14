@@ -6,18 +6,6 @@ echo -e "\e[1;36m🛡️  Installing Guardian Security Suite...\e[0m"
 
 sleep 2
 
- #   Move to the Directory
-
-cd Guardian
-
- #   Make sure install.sh can be executed:
-
-chmod +x install.sh
-
- #   Execute the install script
-
-sudo ./install.sh
-
 # 2. Get the absolute path of the directory the installer is in
 INSTALL_DIR="$(dirname "$(realpath "$0")")"
 
