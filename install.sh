@@ -6,15 +6,19 @@ echo -e "🛡️  Installing Guardian Security Suite..."
 
 sleep 2
 
+#    Clone the repository:
+
 git clone https://github.com/Souldragon9912/Guardian.git
+
+#    Move to the Directory
 
 cd Guardian
 
- #   Make sure install.sh can be executed:
+#    Make sure install.sh can be executed:
 
 chmod +x install.sh
 
- #   Execute the install script
+#    Execute the install script
 
 sudo ./install.sh
 
