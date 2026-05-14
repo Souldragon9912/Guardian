@@ -46,12 +46,32 @@ if [ -f "$INSTALL_DIR/Guardian.desktop" ]; then
     fi
 fi
 
-echo "[i] Installing dependencies"
-sudo apt update && sudo apt install fzf dialog
+# --- Dependency Check & Installation ---
+echo "[*] Verifying system dependencies..."
 
-echo "[✔] fuzzy finder is installed"
-sleep 2
-echo "[i] Final checks"
+# Define the master list of required packages
+DEPENDENCIES=("fzf" "msmtp" "msmtp-mta" "curl" "ufw" "mailutils")
+
+# Loop through the list and check if each is installed
+for pkg in "${DEPENDENCIES[@]}"; do
+    if ! command -v "$pkg" >/dev/null 2>&1 && ! dpkg -l | grep -qw "$pkg"; then
+        echo "    > Missing $pkg. Installing now..."
+        sudo apt-get update > /dev/null 2>&1
+        sudo apt-get install -y "$pkg" > /dev/null 2>&1
+
+        if [ $? -eq 0 ]; then
+            echo "      [+] $pkg installed successfully."
+        else
+            echo "      [!] ERROR: Failed to install $pkg."
+            exit 1
+        fi
+    else
+        echo "    > [✔] $pkg is already installed."
+    fi
+done
+
+echo "[*] All dependencies verified."
+echo ""
 sleep 4
 
 echo -e "[✔] Installation Complete!"
