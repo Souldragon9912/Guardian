@@ -6,6 +6,8 @@ echo -e "\e[1;36m🛡️  Installing Guardian Security Suite...\e[0m"
 
 sleep 2
 
+cd Guardian
+
 # 2. Get the absolute path of the directory the installer is in
 INSTALL_DIR="$(dirname "$(realpath "$0")")"
 
