@@ -53,7 +53,7 @@ sudo ./install.sh
 This is a new one-liner to get the install going. if its not working, please let us know.
 
 
-curl -fsSL https://raw.githubusercontent.com/Souldragon9912/Guardian/main/install.sh | bash
+git clone https://github.com/Souldragon9912/Guardian.git && cd Guardian && sudo ./install.sh
 
 
 ## 💻 Usage
