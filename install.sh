@@ -6,6 +6,7 @@ echo -e "🛡️  Installing Guardian Security Suite..."
 
 sleep 2
 
+git clone https://github.com/Souldragon9912/Guardian.git
 
 cd Guardian
 
@@ -32,7 +33,7 @@ fi
 
 # 5. Create the new global symbolic link
 echo "-> Creating global command..."
-ln -s "$INSTALL_DIR/Guardian.sh" /usr/local/bin/guardian
+sudo ln -s "$INSTALL_DIR/Guardian.sh" /usr/local/bin/guardian
 
 echo -e "[✔] Installation Complete!"
 echo "You can now type 'guardian' from anywhere in your terminal."
