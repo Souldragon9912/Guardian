@@ -6,11 +6,6 @@ echo -e "\e[1;36m🛡️  Installing Guardian Security Suite...\e[0m"
 
 sleep 2
 
-
- #   Clone the repository:
-
-git clone https://github.com/Souldragon9912/Guardian.git
-
  #   Move to the Directory
 
 cd Guardian
