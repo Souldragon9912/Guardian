@@ -53,7 +53,7 @@ sudo ./install.sh
 This is a new one-liner to get the install going. if its not working, please let us know.
 
 
-git clone https://github.com/Souldragon9912/Guardian.git && cd Guardian && sudo ./install.sh
+git clone https://github.com/Souldragon9912/Guardian.git && cd Guardian && sudo ./G-Manager.sh
 
 
 ## 💻 Usage
