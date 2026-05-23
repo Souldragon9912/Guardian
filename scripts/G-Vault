@@ -1,0 +1,329 @@
+#!/usr/bin/env bash
+
+# this was AI assisted to write. While i did write 90% of this so it works with basic functions, Gemini added so much more and i just put the ideas there.
+
+# Configuration Paths
+VAULT_DIR="$HOME/Guardian/.Guardian_Vault"
+mkdir -p "$VAULT_DIR"
+
+# --- 1. Dynamic System Info ---
+UPTIME=$(uptime -p | sed 's/up //')
+USER_IP=$(hostname -I | awk '{print $1}')
+NODE=$(hostname)
+USER=$(whoami)
+
+# Colors
+green=$(tput setaf 2)
+red=$(tput setaf 1)
+cyan=$(tput setaf 6)
+nc=$(tput sgr0)
+
+## ===== Banner =====
+banner=$(
+cat << "EOF"
+ ██████╗       ██╗   ██╗ █████╗ ██╗   ██╗██╗  ████████╗
+██╔════╝       ██║   ██║██╔══██╗██║   ██║██║  ╚══██╔══╝
+██║  ███╗█████╗██║   ██║███████║██║   ██║██║     ██║
+██║   ██║╚════╝╚██╗ ██╔╝██╔══██║██║   ██║██║     ██║
+╚██████╔╝       ╚████╔╝ ██║  ██║╚██████╔╝███████╗██║
+ ╚═════╝         ╚═══╝  ╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝
+EOF
+)
+
+# ====================================================================================================================================
+#                                                               START OF SCRIPT
+# ====================================================================================================================================
+while true; do
+    clear
+    echo " "
+    echo "${green}"
+    echo "$banner"
+    echo "${nc}"
+    echo "Welcome to your vault $USER"
+    # --- 3. System Stats ---
+    echo -e "\e[1;30m====================================================\e[0m"
+    echo -e " \e[1;37mNode:\e[0m   $NODE"
+    echo -e " \e[1;37mIP:\e[0m     $USER_IP"
+    echo -e " \e[1;37mStatus:\e[0m Online  |  \e[1;37mUptime:\e[0m $UPTIME"
+    echo -e "\e[1;30m====================================================\e[0m"
+    echo ""
+
+    # Sub-menu choices
+    OPTIONS="📦 Package & Secure an Asset
+🔓 Extract or Unlock an Asset
+👀 Inspect Asset Contents (Preview)
+❌ Exit Vault"
+
+    SELECTION=$(echo "$OPTIONS" | fzf --height=10 --reverse --prompt="Select Action ❯ ")
+
+    [[ -z "$SELECTION" ]] && break
+
+    case "$SELECTION" in
+        *"Package"*)
+            TYPE_CHOSEN=$(echo -e "📄 Single File\n📁 Entire Directory\n⬅️ Go Back" | fzf --height=8 --reverse --prompt="What are you securing? ❯ ")
+
+            if [[ "$TYPE_CHOSEN" == *"Go Back"* || -z "$TYPE_CHOSEN" ]]; then continue; fi
+
+            if [[ "$TYPE_CHOSEN" == *"File"* ]]; then
+                TARGET=$( { echo "⬅️ Go Back to Type Selection"; find "$HOME" -maxdepth 3 -type f ! -name "*.grdn" 2>/dev/null; } | fzf --height=17 --reverse --prompt="Select Target File ❯ " )
+            else
+                TARGET=$( { echo "⬅️ Go Back to Type Selection"; find "$HOME" -maxdepth 3 -type d ! -path "*/.*" 2>/dev/null; } | fzf --height=17 --reverse --prompt="Select Target Directory ❯ " )
+            fi
+
+            if [[ "$TARGET" == *"Go Back"* || -z "$TARGET" ]]; then continue; fi
+
+            METHOD=$(echo -e "🗜️ Standard ZIP (No Password)\n🔑 Password Protected ZIP\n🛡️ GPG AES-256 Vault (Max Security)\n⬅️ Go Back" | fzf --height=9 --reverse --prompt="Select Security Level ❯ ")
+
+            if [[ "$METHOD" == *"Go Back"* || -z "$METHOD" ]]; then continue; fi
+
+            echo -e "\n[*] Processing: $(basename "$TARGET")"
+            SUCCESS=false
+
+            # --- ROUTING SECURITY METHODS ---
+            BASENAME=$(basename "$TARGET")
+            if [[ -f "$TARGET" ]]; then
+                if [[ "$BASENAME" == *.* ]]; then
+                    CLEAN_NAME="${BASENAME%.*}"
+                    EXTENSION="${BASENAME##*.}"
+                else
+                    CLEAN_NAME="$BASENAME"
+                    EXTENSION="none"
+                fi
+            else
+                CLEAN_NAME="$BASENAME"
+                EXTENSION="dir.zip" # Tag directories so we know to unzip them on extraction
+            fi
+
+            if [[ "$METHOD" == *"Standard ZIP"* ]]; then
+                if [[ -d "$TARGET" ]]; then
+                    if zip -r -q "$VAULT_DIR/$CLEAN_NAME.zip" "$TARGET"; then SUCCESS=true; fi
+                else
+                    if zip -j -q "$VAULT_DIR/$CLEAN_NAME.zip" "$TARGET"; then SUCCESS=true; fi
+                fi
+
+            elif [[ "$METHOD" == *"Password Protected"* ]]; then
+                echo "[!] You will be prompted to enter and verify a password for this ZIP."
+                if [[ -d "$TARGET" ]]; then
+                    if zip -r -e -q "$VAULT_DIR/$CLEAN_NAME.zip" "$TARGET"; then SUCCESS=true; fi
+                else
+                    if zip -j -e -q "$VAULT_DIR/$CLEAN_NAME.zip" "$TARGET"; then SUCCESS=true; fi
+                fi
+
+            elif [[ "$METHOD" == *"GPG"* ]]; then
+                # --- GUARDIAN PROPRIETARY HEADER INJECTION ---
+                if [[ -d "$TARGET" ]]; then
+                    echo "[*] Compressing directory node..."
+                    TARGET_FILE=$(mktemp "/dev/shm/guardian_dir_XXXXXX.zip")
+                    zip -r -q "$TARGET_FILE" "$TARGET"
+                    CLEANUP_TEMP=true
+                else
+                    TARGET_FILE="$TARGET"
+                    CLEANUP_TEMP=false
+                fi
+
+                echo "[*] Forging proprietary Guardian header..."
+                PAYLOAD=$(mktemp "/dev/shm/guardian_payload_XXXXXX.tmp")
+
+                # Step 1: Write metadata signature to line 1
+                echo "GUARDIAN_META_V1|EXT=.$EXTENSION" > "$PAYLOAD"
+
+                # Step 2: Append actual file bytes from line 2 onward
+                cat "$TARGET_FILE" >> "$PAYLOAD"
+
+                echo "[*] Securing payload with AES-256..."
+                if grdn --symmetric --cipher-algo AES256 --output "$VAULT_DIR/${CLEAN_NAME}.grdn" "$PAYLOAD"; then
+                    SUCCESS=true
+                fi
+
+                # Clean up RAM footprints
+                rm -f "$PAYLOAD"
+                [[ "$CLEANUP_TEMP" == true ]] && rm -f "$TARGET_FILE"
+            fi
+
+            # --- POST-PROCESSING ---
+            if [ "$SUCCESS" = true ]; then
+                echo -e "\n${green}[✓] Success! Asset packaged and saved to Vault.${nc}"
+                if [[ -f "$TARGET" ]]; then
+                    read -rp "Would you like to securely shred the original unencrypted file? (y/n): " -n 1 shred_choice
+                    if [[ "$shred_choice" =~ ^[Yy]$ ]]; then
+                        shred -u -v "$TARGET"
+                        echo -e "\n${green}[✓] Original file securely wiped from block storage.${nc}"
+                    fi
+                fi
+            else
+                echo -e "\n${red}[X] Operation cancelled or failed.${nc}"
+            fi
+
+            echo "-------------------------------------------------------"
+            read -n 1 -s -r -p "Press any key to return to Vault Menu..."
+            ;;
+
+        *"Extract"*)
+            echo -e "\n[!] Select an asset from your Vault to release:"
+            TARGET_ASSET=$( { echo "⬅️ Go Back to Main Vault Menu"; find "$VAULT_DIR" -type f \( -name "*.grdn" -o -name "*.zip" \) 2>/dev/null; } | fzf --height=14 --reverse --prompt="Select Asset to Extract ❯ " )
+
+            if [[ "$TARGET_ASSET" == *"Go Back"* || -z "$TARGET_ASSET" ]]; then continue; fi
+
+            echo -e "\n[*] Processing: $(basename "$TARGET_ASSET")"
+            SUCCESS=false
+
+            # --- HANDLING ZIP ARCHIVES ---
+            if [[ "$TARGET_ASSET" == *.zip ]]; then
+                EXTRACT_DIR="$HOME/Desktop/$(basename "$TARGET_ASSET" .zip)"
+                mkdir -p "$EXTRACT_DIR"
+                if unzip -q "$TARGET_ASSET" -d "$EXTRACT_DIR"; then
+                    echo -e "\n${green}[✓] ZIP successfully extracted to: $EXTRACT_DIR${nc}"
+                    SUCCESS=true
+                else
+                    echo -e "\n${red}[X] Extraction failed (Incorrect password or corrupted archive).${nc}"
+                    rmdir "$EXTRACT_DIR" 2>/dev/null
+                fi
+
+            # --- HANDLING GPG ARCHIVES (PROPRIETARY HEADER EXTRACTION) ---
+            elif [[ "$TARGET_ASSET" == *.grdn ]]; then
+                OUTPUT_NAME=$(basename "$TARGET_ASSET" .grdn)
+                TMP_DECRYPT=$(mktemp "/dev/shm/extract_XXXXXX.tmp")
+
+                if grdn --decrypt --output "$TMP_DECRYPT" "$TARGET_ASSET"; then
+
+                    # Read the first line to check for Guardian signature
+                    HEADER=$(head -n 1 "$TMP_DECRYPT")
+
+                    if [[ "$HEADER" == GUARDIAN_META_V1* ]]; then
+                        # Extract the extension from the header string
+                        ORIGINAL_EXT=$(echo "$HEADER" | awk -F'EXT=' '{print $2}')
+
+                        if [[ "$ORIGINAL_EXT" == ".dir.zip" ]]; then
+                            # Reconstitute directory
+                            EXTRACT_DIR="$HOME/Desktop/$OUTPUT_NAME"
+                            mkdir -p "$EXTRACT_DIR"
+                            TMP_ZIP=$(mktemp "/dev/shm/extract_zip_XXXXXX.zip")
+                            tail -n +2 "$TMP_DECRYPT" > "$TMP_ZIP"
+                            unzip -q "$TMP_ZIP" -d "$EXTRACT_DIR"
+                            rm -f "$TMP_ZIP"
+                            echo -e "${green}[✓] Directory asset reconstituted at: $EXTRACT_DIR${nc}"
+                        elif [[ "$ORIGINAL_EXT" == ".none" ]]; then
+                            FINAL_OUTPUT="$HOME/Desktop/$OUTPUT_NAME"
+                            tail -n +2 "$TMP_DECRYPT" > "$FINAL_OUTPUT"
+                            echo -e "${green}[✓] Proprietary asset reconstituted: $(basename "$FINAL_OUTPUT")${nc}"
+                        else
+                            FINAL_OUTPUT="$HOME/Desktop/${OUTPUT_NAME}${ORIGINAL_EXT}"
+                            tail -n +2 "$TMP_DECRYPT" > "$FINAL_OUTPUT"
+                            echo -e "${green}[✓] Proprietary asset reconstituted: $(basename "$FINAL_OUTPUT")${nc}"
+                        fi
+                    else
+                        # Fallback for old legacy encrypted files without headers
+                        FINAL_OUTPUT="$HOME/Desktop/$OUTPUT_NAME"
+                        mv "$TMP_DECRYPT" "$FINAL_OUTPUT"
+                        echo -e "${green}[✓] Legacy asset extracted.${nc}"
+                    fi
+                    SUCCESS=true
+                else
+                    echo -e "\n${red}[X] Decryption failed (Incorrect passphrase or corrupted file).${nc}"
+                    rm -f "$TMP_DECRYPT"
+                fi
+                rm -f "$TMP_DECRYPT" # Ensure cleanup
+            fi
+
+            if [ "$SUCCESS" = true ]; then
+                echo ""
+                read -rp "Remove the original packaged asset from the Vault? (y/n): " -n 1 del_choice
+                if [[ "$del_choice" =~ ^[Yy]$ ]]; then
+                    rm -f "$TARGET_ASSET"
+                    echo -e "\n${green}[✓] Asset cleared from Vault.${nc}"
+                fi
+            fi
+
+            echo "-------------------------------------------------------"
+            read -n 1 -s -r -p "Press any key to return to Vault Menu..."
+            ;;
+
+       *"Inspect"*)
+            echo -e "\n[!] Select an asset to preview without extracting:"
+            TARGET_ASSET=$( { echo "⬅️ Go Back to Main Vault Menu"; find "$VAULT_DIR" -type f 2>/dev/null; } | fzf --height=12 --reverse --prompt="Select Asset to Inspect ❯ " )
+
+            if [[ "$TARGET_ASSET" == *"Go Back"* || -z "$TARGET_ASSET" ]]; then continue; fi
+
+            echo -e "\n${cyan}--- Asset Preview: $(basename "$TARGET_ASSET") ---${nc}"
+
+            if [[ "$TARGET_ASSET" == *.zip ]]; then
+                unzip -l "$TARGET_ASSET" | less -R -X
+
+            elif [[ "$TARGET_ASSET" == *.grdn ]]; then
+                echo "[*] Unlocking transient preview..."
+                TMP_FILE=$(mktemp "/dev/shm/vault_preview_XXXXXX.tmp")
+
+                if grdn --quiet --yes --decrypt --output "$TMP_FILE" "$TARGET_ASSET"; then
+                    # Check for our proprietary Guardian Header
+                    HEADER=$(head -n 1 "$TMP_FILE")
+
+                    if [[ "$HEADER" == GUARDIAN_META_V1* ]]; then
+                        ORIGINAL_EXT=$(echo "$HEADER" | awk -F'EXT=' '{print $2}')
+
+                        if [[ "$ORIGINAL_EXT" == ".dir.zip" ]]; then
+                             TMP_ZIP=$(mktemp "/dev/shm/preview_zip_XXXXXX.zip")
+                             tail -n +2 "$TMP_FILE" > "$TMP_ZIP"
+                             echo -e "${green}[✓] Directory unlocked. Press 'q' to exit preview when done.${nc}"
+                             sleep 1
+                             unzip -l "$TMP_ZIP" | less -R -X
+                             rm -f "$TMP_ZIP"
+                        else
+                             # It is a standard file. We strip the header so the system can read it properly.
+                             CLEAN_PAYLOAD=$(mktemp "/dev/shm/clean_payload_XXXXXX${ORIGINAL_EXT}")
+                             tail -n +2 "$TMP_FILE" > "$CLEAN_PAYLOAD"
+
+                             # Check what kind of file it is using the file command
+                             MIME_TYPE=$(file -b --mime-type "$CLEAN_PAYLOAD")
+
+                             if [[ "$MIME_TYPE" == image/* || "$MIME_TYPE" == application/pdf ]]; then
+                                 echo -e "${green}[✓] Visual Media detected. Opening graphical viewer...${nc}"
+                                 # Open the file silently using the OS default viewer
+                                 xdg-open "$CLEAN_PAYLOAD" 2>/dev/null &
+                                 echo -e "${yellow}[!] Close the image viewer, then press any key here to securely purge memory...${nc}"
+                                 read -n 1 -s -r
+                             else
+                                 echo -e "${green}[✓] Text file unlocked. Press 'q' to exit preview when done.${nc}"
+                                 sleep 1
+                                 less -R -X "$CLEAN_PAYLOAD"
+                             fi
+                             rm -f "$CLEAN_PAYLOAD"
+                        fi
+                    else
+                        # Legacy files without headers
+                        MIME_TYPE=$(file -b --mime-type "$TMP_FILE")
+                        if [[ "$MIME_TYPE" == image/* || "$MIME_TYPE" == application/pdf ]]; then
+                            xdg-open "$TMP_FILE" 2>/dev/null &
+                            echo -e "${yellow}[!] Close the image viewer, then press any key here to securely purge memory...${nc}"
+                            read -n 1 -s -r
+                        else
+                            echo -e "${green}[✓] Legacy File unlocked. Press 'q' to exit preview when done.${nc}"
+                            sleep 1
+                            less -R -X "$TMP_FILE"
+                        fi
+                    fi
+                else
+                    echo -e "\n${red}[X] Preview failed (Incorrect passphrase or cancelled).${nc}"
+                fi
+                rm -f "$TMP_FILE"
+            else
+                # Fallback for unencrypted files
+                MIME_TYPE=$(file -b --mime-type "$TARGET_ASSET")
+                if [[ "$MIME_TYPE" == image/* || "$MIME_TYPE" == application/pdf ]]; then
+                    xdg-open "$TARGET_ASSET" 2>/dev/null &
+                else
+                    less -R -X "$TARGET_ASSET"
+                fi
+            fi
+
+            echo -e "\n${cyan}-------------------------------------------------------${nc}"
+            read -n 1 -s -r -p "Press any key to return to Vault Menu..."
+            ;;
+
+        *"Exit Vault"*)
+            break
+            ;;
+    esac
+done
+
+echo -e "Exiting Vault Manager..."
+sleep 1

@@ -73,16 +73,21 @@ echo "Welcome $USER"
     echo ""
 
     # --- 4. Define Menu Options ---
-    MENU_OPTIONS="G-SEC : Run System Security Audit (Must be Root)
+    MENU_OPTIONS="------ Root Only tools ------
+G-SEC : Run System Security Audit
+G-UFW : Configurator for UFW
+G-Hardware: Run some hardware tests
+
+------ General Tools ------
+G-Vault: Securly encript or zip files
 G-PASS: Audit User Password
-G-UFW : Configurator for UFW (Must be Root)
-G-Notify: Set-up SMS notifications
+G-Ventoy: Install or update ventoy
 
 EXIT  : Shutdown Guardian"
 
     # --- 5. Launch fzf Menu (Now with --height) ---
     # --height=12 forces the menu to only use 12 lines
-    SELECTION=$(echo "$MENU_OPTIONS" | fzf --height=12 \
+    SELECTION=$(echo "$MENU_OPTIONS" | fzf --height=16 \
                                            --reverse \
                                            --info=hidden \
                                            --header="[ Use Mouse or Arrows. Double-click to select. ]" \
@@ -97,9 +102,10 @@ EXIT  : Shutdown Guardian"
         "G-SEC")  sudo ~/Guardian/scripts/G-Sec.sh; read -n 1 -s -r -p "Press any key to return...";;
         "G-PASS") clear; bash ~/Guardian/scripts/G-pass.sh; read -n 1 -s -r -p "Press any key to return...";;
         "G-UFW")  sudo ~/Guardian/scripts/G-UFW.sh ;;
-        "G-Notify") clear; bash ~/Guardian/scripts/G-Notify.sh; read -n 1 -s -r -p "Press any key to return...";;
-        "G-TOP")  clear; ./g-top.sh;;
+        "G-Vault") clear; bash ~/Guardian/scripts/G-Vault;;
+        "G-Ventoy")  clear; bash ~/Guardian/scripts/G-Ventoy.sh;;
         "G-NET")  clear; ./g-net.sh; read -n 1 -s -r -p "Press any key to return...";;
+        "G-Hardware") sudo bash ~/Guardian/scripts/G-Hardware.sh; read -n 1 -s -r -p "Press any key to return...";;
         "EXIT"|"") clear; echo "Guardian offline."; exit 0;;
     esac
 done
