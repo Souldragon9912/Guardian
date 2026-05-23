@@ -131,7 +131,7 @@ while true; do
                 cat "$TARGET_FILE" >> "$PAYLOAD"
 
                 echo "[*] Securing payload with AES-256..."
-                if grdn --symmetric --cipher-algo AES256 --output "$VAULT_DIR/${CLEAN_NAME}.grdn" "$PAYLOAD"; then
+                if gpg --symmetric --cipher-algo AES256 --output "$VAULT_DIR/${CLEAN_NAME}.grdn" "$PAYLOAD"; then
                     SUCCESS=true
                 fi
 
@@ -184,7 +184,7 @@ while true; do
                 OUTPUT_NAME=$(basename "$TARGET_ASSET" .grdn)
                 TMP_DECRYPT=$(mktemp "/dev/shm/extract_XXXXXX.tmp")
 
-                if grdn --decrypt --output "$TMP_DECRYPT" "$TARGET_ASSET"; then
+                if gpg --decrypt --output "$TMP_DECRYPT" "$TARGET_ASSET"; then
 
                     # Read the first line to check for Guardian signature
                     HEADER=$(head -n 1 "$TMP_DECRYPT")
@@ -253,7 +253,7 @@ while true; do
                 echo "[*] Unlocking transient preview..."
                 TMP_FILE=$(mktemp "/dev/shm/vault_preview_XXXXXX.tmp")
 
-                if grdn --quiet --yes --decrypt --output "$TMP_FILE" "$TARGET_ASSET"; then
+                if gpg --quiet --yes --decrypt --output "$TMP_FILE" "$TARGET_ASSET"; then
                     # Check for our proprietary Guardian Header
                     HEADER=$(head -n 1 "$TMP_FILE")
 
