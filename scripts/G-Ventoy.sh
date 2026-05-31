@@ -15,10 +15,10 @@ spinner() {
     local i=0
     while kill -0 "$pid" 2>/dev/null; do
         i=$(( (i+1) % 4 ))
-        printf "\r[%c] Loading Installation Assets..." "${spin:$i:1}"
+        printf "[%c] Loading Installation Assets..." "${spin:$i:1}"
         sleep 0.2
     done
-    printf "\r[${green}✓${nc}] Done!                  \n"
+    printf "[${green}✓${nc}] Done!                  "
 }
 
     UPTIME=$(uptime -p | sed 's/up //')
@@ -33,7 +33,7 @@ trap 'clear; echo "Guardian offline."; exit' SIGINT SIGTERM
 while true; do
     clear
 
-    # --- 1. The ASCII Art Header ---
+    # --- The ASCII Art Header ---
     banner=$(cat <<"EOF"
  ██████╗       ██╗   ██╗███████╗███╗   ██╗████████╗ ██████╗ ██╗   ██╗
 ██╔════╝       ██║   ██║██╔════╝████╗  ██║╚══██╔══╝██╔═══██╗╚██╗ ██╔╝
@@ -49,20 +49,19 @@ echo "${blue}"
 echo "$banner"
 echo "${nc}"
 echo "Welcome $USER"
-    # --- 3. System Stats ---
-    echo -e "\e[1;30m====================================================\e[0m"
-    echo -e " \e[1;37mNode:\e[0m   $NODE"
-    echo -e " \e[1;37mIP:\e[0m     $USER_IP"
-    echo -e " \e[1;37mStatus:\e[0m Online  |  \e[1;37mUptime:\e[0m $UPTIME"
-    echo -e "\e[1;30m====================================================\e[0m"
+    echo -e "====================================================
+    echo -e " Node:   $NODE"
+    echo -e " IP:     $USER_IP"
+    echo -e " Status: Online  |  Uptime: $UPTIME"
+    echo -e "====================================================
     echo ""
 
-    # --- 2. Define Menu Options ---
+    # --- Define Menu Options ---
     MENU_OPTIONS="Install Ventoy
 Update Ventoy
 EXIT : Back to Guardian"
 
-    # --- 3. Launch fzf Menu ---
+    # --- Launch fzf Menu ---
     SELECTION=$(echo "$MENU_OPTIONS" | fzf --height=12 \
                                            --reverse \
                                            --info=hidden \
@@ -71,12 +70,12 @@ EXIT : Back to Guardian"
                                            --pointer="▶" \
                                            --color="fg+:10,bg+:0,hl:2,hl+:2,prompt:4,pointer:1")
 
-    # If the user hits escape or cancels fzf
+    # If user hits escape or cancels fzf
     [[ -z "$SELECTION" ]] && continue
 
     CHOICE=$(echo "$SELECTION" | awk -F':' '{print $1}' | xargs)
 
-    # --- 4. Route the Choice ---
+    # --- Route the Choice ---
     case "$CHOICE" in
         "Install Ventoy")
             clear
@@ -109,7 +108,7 @@ EXIT : Back to Guardian"
             VENTOY_DIR="ventoy-1.0.99"
             cd "$VENTOY_DIR" || exit 1
 
-            echo -e "\n${green}[✓] Launching Ventoy Web Service GUI...${nc}"
+            echo -e "${green}[✓] Launching Ventoy Web Service GUI...${nc}"
             echo "[*] Open http://127.0.0.1:24600 in your browser to flash your USB stick."
             echo "[*] Press Ctrl+C inside this terminal window when done flashing."
             echo "------------------------------------------------------------------"
@@ -120,12 +119,12 @@ EXIT : Back to Guardian"
             clear
             echo "${blue}$banner${nc}"
             if [[ -d "$HOME/Downloads/Ventoy_interactive/ventoy-1.0.99" ]]; then
-                echo -e "\n[*] Navigating to localized execution directory..."
+                echo -e "[*] Navigating to localized execution directory..."
                 cd "$HOME/Downloads/Ventoy_interactive/ventoy-1.0.99"
-                echo -e "${green}[✓] Executing localized update server...${nc}\n"
+                echo -e "${green}[✓] Executing localized update server...${nc}"
                 sudo bash VentoyWeb.sh
             else
-                echo -e "\n${red}[X] Error: Local Ventoy installation directory not found.${nc}"
+                echo -e "${red}[X] Error: Local Ventoy installation directory not found.${nc}"
                 echo "Please run 'Install Ventoy' first to fetch compilation binaries."
                 read -n 1 -s -r -p "Press any key to return..."
             fi
