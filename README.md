@@ -4,9 +4,10 @@ Guardian is a simple and easy-to-use tool that combines multiple different modul
 
 Root Only  
 These tools consist of G-SEC, G-UFW, and G-Hardware. These tools are root-only because they inspect system-level configurations, services, or hardware context that require elevated permissions.
-* **G-SEC:** 
+* **G-SEC:** G-SEC is used to audit system configurations, services, and privileges to identify potential security risks without automatically applying remediation changes.
 * **G-UFW:** G-UFW is used to inspect and validate firewall rules and exposure rather than automatically enforcing or modifying firewall configurations.
-* **G-HARDW:** 
+* **G-HARDW:** G-HARDW provides hardware and system context such as virtualization status, disk encryption state, and firmware type to help interpret and prioritize findings from other Guardian modules. It performs inspection and validation only and does not modify system settings.
+  
 General tools   
 G-Vault, G-pass, and G-ventoy. The general tools are available to all users on the system. Each one of these tools performs different tasks ranging from securely storing files to auditing the users' passwords to ensure they meet NIST guidelines. G-Ventoy is the only one that is slightly different because it is simply used to install or update pre-existing Ventoy drives if the user owns one.
 
@@ -131,7 +132,7 @@ The G-Vault module is a terminal-driven cryptographic storage manager built for 
 * **G-SEC (Security Audit):** Runs a full system security check. There is a planned CVE check comming soon. Although, that might have its own option.
 * **G-PASS (Shadow Audit):** Analyzes local user passwords Against NIST Standards
 * **GUI Launcher:** Automatically generates a `.desktop` shortcut and system icon for integration into standard Linux desktop environments (like KDE/GNOME).
-* 
+* **G-HARDW:** Collects system and hardware context such as virtualization status, disk encryption state, and firmware type to help better understand security findings.
 -  Anything below this is still in the building phaze and not yet release -
 * **G-TOP (Process Monitor):** An interactive, real-time process manager.
 * **G-NET (Network/Power Diagnostics):** Scans system logs (`wtmp`, `journalctl`) to detect uncontrolled power losses, hardware disconnects, and network instability.
