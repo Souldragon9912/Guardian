@@ -1,0 +1,56 @@
+███████╗███████╗ ██████╗██╗   ██╗██████╗ ██╗████████╗██╗   ██╗
+██╔════╝██╔════╝██╔════╝██║   ██║██╔══██╗██║╚══██╔══╝╚██╗ ██╔╝
+███████╗█████╗  ██║     ██║   ██║██████╔╝██║   ██║    ╚████╔╝
+╚════██║██╔══╝  ██║     ██║   ██║██╔══██╗██║   ██║     ╚██╔╝
+███████║███████╗╚██████╗╚██████╔╝██║  ██║██║   ██║      ██║
+╚══════╝╚══════╝ ╚═════╝ ╚═════╝ ╚═╝  ╚═╝╚═╝   ╚═╝      ╚═╝
+
+ █████╗ ██╗   ██╗██████╗ ██╗████████╗
+██╔══██╗██║   ██║██╔══██╗██║╚══██╔══╝
+███████║██║   ██║██║  ██║██║   ██║
+██╔══██║██║   ██║██║  ██║██║   ██║
+██║  ██║╚██████╔╝██████╔╝██║   ██║
+╚═╝  ╚═╝ ╚═════╝ ╚═════╝ ╚═╝   ╚═╝
+==========================================
+        SYSTEM AUDIT IDENTITY
+==========================================
+AUDIT TIME : 2026-05-31 23:14:12
+OS NAME    : Ubuntu 26.04 LTS
+KERNEL VER : 7.0.0-22-generic
+SHELL ENV  : /bin/bash
+==========================================
+
+[ SYSTEM-WIDE PASSWORD REPORT ]
+--------------------------------
+Checking Account: root
+  -> Last Changed :  Apr 11, 2026
+  -> Expiration   :  never
+  -> Status       : [ACTIVE/LOCKED] 
+--------------------------------
+Checking Account: brendan
+  -> Last Changed :  Mar 05, 2026
+  -> Expiration   :  never
+  -> Status       : [ACTIVE/LOCKED] 
+---------------------------------------------
+password section complete. Moving on to ssh..
+---------------------------------------------
+[33m [!] SSH config not found. Skipping... (B[m
+--------------------------------
+      SSH section complete      
+--------------------------------
+ 
+[i] Starting the UserID check...
+[32m[✓] No unauthorized root accounts detected.(B[m
+--------------------------------
+    UserID section complete     
+--------------------------------
+ 
+tcp   LISTEN 0      4096                    127.0.0.54:53         0.0.0.0:*    users:(("systemd-resolve",pid=423,fd=19))
+tcp   LISTEN 0      4096                     127.0.0.1:43105      0.0.0.0:*    users:(("containerd",pid=1477,fd=14))    
+tcp   LISTEN 0      4096                 127.0.0.53%lo:53         0.0.0.0:*    users:(("systemd-resolve",pid=423,fd=17))
+tcp   LISTEN 0      4096                 100.120.88.38:45659      0.0.0.0:*    users:(("tailscaled",pid=3306,fd=21))    
+tcp   LISTEN 0      511                      127.0.0.1:6463       0.0.0.0:*    users:(("Discord",pid=3708,fd=112))      
+tcp   LISTEN 0      4096                     127.0.0.1:631        0.0.0.0:*    users:(("cupsd",pid=1445,fd=7))          
+tcp   LISTEN 0      4096                         [::1]:631           [::]:*    users:(("cupsd",pid=1445,fd=6))          
+tcp   LISTEN 0      50                               *:1716             *:*    users:(("kdeconnectd",pid=2177,fd=19))   
+tcp   LISTEN 0      4096   [fd7a:115c:a1e0::d636:5826]:37521         [::]:*    users:(("tailscaled",pid=3306,fd=23))    

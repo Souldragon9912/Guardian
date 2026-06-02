@@ -19,7 +19,7 @@ spinner() {
 
     while kill -0 "$pid" 2>/dev/null; do
         i=$(( (i+1) %4 ))
-        printf "\r[%c] Checking..." "${spin:$i:1}"
+        printf " Checking..." "${spin:$i:1}"
         sleep 1
     done
     printf "\r[✓] Done!          \n"
@@ -53,7 +53,6 @@ echo "$banner" > "$LOG_FILE"
 #                                                               START OF SCRIPT
 # ====================================================================================================================================
 clear
-# ===== Start of script =====
 # banner paste
 echo "${blue}"
 echo "$banner"
@@ -109,12 +108,6 @@ echo "${nc}"
 
  echo "For this next step, we will need your password. It will be used to check if it's strong enough."
 
-# --- Icons & Colors ---
-CHECK="[✓]"
-CROSS="[X]"
-CYAN="\033[0;36m"
-NC="\033[0m"
-
 echo "${nc}"
 
 sleep 3 &
@@ -152,9 +145,6 @@ echo "${nc}"
     echo "---------------------------------------------" >> "$LOG_FILE"
 
 sleep 1
-#
-# SSH section
-#
 
 clear
 # banner paste

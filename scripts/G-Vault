@@ -29,7 +29,8 @@ cat << "EOF"
  ╚═════╝         ╚═══╝  ╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝
 EOF
 )
-
+# Souldragon912
+# Ant2-2
 # ====================================================================================================================================
 #                                                               START OF SCRIPT
 # ====================================================================================================================================
@@ -40,12 +41,13 @@ while true; do
     echo "$banner"
     echo "${nc}"
     echo "Welcome to your vault $USER"
-    # --- 3. System Stats ---
-    echo -e "\e[1;30m====================================================\e[0m"
-    echo -e " \e[1;37mNode:\e[0m   $NODE"
-    echo -e " \e[1;37mIP:\e[0m     $USER_IP"
-    echo -e " \e[1;37mStatus:\e[0m Online  |  \e[1;37mUptime:\e[0m $UPTIME"
-    echo -e "\e[1;30m====================================================\e[0m"
+
+    echo -e " ==================================================== "
+    echo -e "  Node:    $NODE"
+    echo -e "  IP:      $USER_IP"
+    echo -e "  Status:  Online  |  Uptime:  $UPTIME"
+    echo -e "  Version: 1.0     |  Name:    Aegis "
+    echo -e " ==================================================== "
     echo ""
 
     # Sub-menu choices
@@ -131,7 +133,7 @@ while true; do
                 cat "$TARGET_FILE" >> "$PAYLOAD"
 
                 echo "[*] Securing payload with AES-256..."
-                if grdn --symmetric --cipher-algo AES256 --output "$VAULT_DIR/${CLEAN_NAME}.grdn" "$PAYLOAD"; then
+                if gpg --symmetric --cipher-algo AES256 --output "$VAULT_DIR/${CLEAN_NAME}.grdn" "$PAYLOAD"; then
                     SUCCESS=true
                 fi
 
@@ -184,7 +186,7 @@ while true; do
                 OUTPUT_NAME=$(basename "$TARGET_ASSET" .grdn)
                 TMP_DECRYPT=$(mktemp "/dev/shm/extract_XXXXXX.tmp")
 
-                if grdn --decrypt --output "$TMP_DECRYPT" "$TARGET_ASSET"; then
+                if gpg --decrypt --output "$TMP_DECRYPT" "$TARGET_ASSET"; then
 
                     # Read the first line to check for Guardian signature
                     HEADER=$(head -n 1 "$TMP_DECRYPT")
@@ -253,7 +255,7 @@ while true; do
                 echo "[*] Unlocking transient preview..."
                 TMP_FILE=$(mktemp "/dev/shm/vault_preview_XXXXXX.tmp")
 
-                if grdn --quiet --yes --decrypt --output "$TMP_FILE" "$TARGET_ASSET"; then
+                if gpg --quiet --yes --decrypt --output "$TMP_FILE" "$TARGET_ASSET"; then
                     # Check for our proprietary Guardian Header
                     HEADER=$(head -n 1 "$TMP_FILE")
 

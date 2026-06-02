@@ -39,15 +39,19 @@ EOF
 clear
 echo "  "
 echo "  "
+# Souldragon912
+# Ant2-2
+
 echo "${blue}"
 echo "$banner"
 echo "${nc}"
-    # --- 3. System Stats ---
-    echo -e "\e[1;30m====================================================\e[0m"
-    echo -e " \e[1;37mNode:\e[0m   $NODE"
-    echo -e " \e[1;37mIP:\e[0m     $USER_IP"
-    echo -e " \e[1;37mStatus:\e[0m Online  |  \e[1;37mUptime:\e[0m $UPTIME"
-    echo -e "\e[1;30m====================================================\e[0m"
+echo " Welcome $USER"
+    echo -e " ==================================================== "
+    echo -e "  Node:    $NODE"
+    echo -e "  IP:      $USER_IP"
+    echo -e "  Status:  Online  |  Uptime:  $UPTIME"
+    echo -e "  Version: 1.0     |  Name:    Aegis "
+    echo -e " ==================================================== "
     echo ""
 
 # --- Guardian Shield-Navigator v2.1 ---
@@ -125,7 +129,6 @@ while true; do
         sudo ufw --force enable > /dev/null
         echo " [ DONE ]"
 
-        # Clear the terminal screen to reset any weird wrapping issues
         clear
         echo "[+] Shield successfully restored to baseline."
     else
