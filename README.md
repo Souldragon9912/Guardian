@@ -3,8 +3,10 @@
 Guardian is a simple and easy-to-use tool that combines multiple different modules to perform different tasks. Each of the tools has its own priority and use cases, some being root-only and others being general use. Every tool is in one of two categories:
 
 Root Only  
-These tools consist of G-SEC, G-UFW, and G-Hardware. These tools are root-only because they make system-level changes or affect security or go in-depth further in the system that requires root permissions.
-
+These tools consist of G-SEC, G-UFW, and G-Hardware. These tools are root-only because they inspect system-level configurations, services, or hardware context that require elevated permissions.
+* **G-SEC:** 
+* **G-UFW:** G-UFW is used to inspect and validate firewall rules and exposure rather than automatically enforcing or modifying firewall configurations.
+* **G-HARDW:** 
 General tools   
 G-Vault, G-pass, and G-ventoy. The general tools are available to all users on the system. Each one of these tools performs different tasks ranging from securely storing files to auditing the users' passwords to ensure they meet NIST guidelines. G-Ventoy is the only one that is slightly different because it is simply used to install or update pre-existing Ventoy drives if the user owns one.
 
@@ -42,6 +44,8 @@ This is a new one-liner to get the install going. if its not working, please let
 git clone https://github.com/Souldragon9912/Guardian.git && cd Guardian && sudo ./G-Manager.sh
 ## 
 
+Guardian is designed around assessment, inspection, and validation, with remediation actions performed manually by the user rather than enforced automatically.
+
 ## Ethical & Authorized Use Statement
 
 The Guardian Suite is to be run locally as intended with some tools requiring admin privileges, while others can be used by the general user. Each of the tools have their own priority and use case and some are strictly limited to root access or administrative users for the security related tools. **Data will not be collected**. The authors of Guardian will not see any of your data. Everything will be run locally on your system. This tool is used for security and system analysis only. It is never transmitted to the author or any external parties.. Ultimately, the responsibility for maintaining confidentiality lies with the user should information be disclosed to anyone outside of the system owner, administrator, or executive management
@@ -61,7 +65,7 @@ While using Guardian, there are many risks that are associated and found, so the
 * Remote administrative access through SSH  
 * Potentially users who have a UID of zero, in other words, users who have root access that potentially shouldn't
 
-For example, once the CVE tool is produced for this, it will scan your system for any potential CVEs. For example, there is a zero-day attack known as “Dirty Frag” that gives root access on all major distros right now. If your system is found to have that specific CVE, it will highlight that CVE in red and give a brief description of it, and encourage the user to search and find remediation through the provided links that will be there.   
+For example, once the CVE tool is produced for this, it will scan your system for any potential CVEs. For example, there is a zero-day attack known as “Dirty Frag” that gives root access on all major distros right now. If your system is found to have that specific CVE, it will highlight that CVE in red and give a brief description of it, and encourage the user to search and find remediation through the provided links that will be there. This example is meant to show how serious vulnerabilities would be presented to the user, rather than reflect a currently active detection.   
 Guardian focuses on identifying configuration based risks through analysis and inspection, rather than actively exploiting the system. Plans to implement future CVE awareness features to help out with known vulnerabilities and remediation steps is in the works as well.
 
 | Vulnerability | Severity | Likelihood | Impact | Risk Level | Justification |
