@@ -45,6 +45,9 @@ EOF
 )
 echo " "
 echo " "
+# Souldragon912
+# Ant2-2
+
 echo "${blue}"
 echo "$banner"
 echo "${nc}"

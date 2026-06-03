@@ -27,7 +27,7 @@ if [[ -f "$DESKTOP_FILE" ]]; then
     fi
 fi
 
-# ---- Refresh icon cache (this is important) ----
+# ---- Refresh icon cache  ----
 if command -v update-desktop-database >/dev/null 2>&1; then
     update-desktop-database "$SCRIPT_DIR" 2>/dev/null || true
 fi
@@ -44,9 +44,6 @@ while true; do
     NODE=$(hostname)
     USER=$(whoami)
 
-    # --- 2. The ASCII Art Header ---
-    # Using 'cat' with EOF is the cleanest way to print multi-line text in bash
-    # The \e[1;36m makes it Cyan, \e[0m resets it
     echo -e "\e[1;36m"
 banner=$(
 cat <<"EOF"
@@ -58,21 +55,24 @@ cat <<"EOF"
  ╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝ ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝
 EOF
 )
-    echo -e "\e[0m"
+    echo -e " "
+
+# Souldragon912
+# Ant2-2
 
 echo "${blue}"
 echo "$banner"
 echo "${nc}"
-echo "Welcome $USER"
-    # --- 3. System Stats ---
-    echo -e "\e[1;30m====================================================\e[0m"
-    echo -e " \e[1;37mNode:\e[0m   $NODE"
-    echo -e " \e[1;37mIP:\e[0m     $USER_IP"
-    echo -e " \e[1;37mStatus:\e[0m Online  |  \e[1;37mUptime:\e[0m $UPTIME"
-    echo -e "\e[1;30m====================================================\e[0m"
+echo " Welcome $USER"
+    echo -e " ==================================================== "
+    echo -e "  Node:    $NODE"
+    echo -e "  IP:      $USER_IP"
+    echo -e "  Status:  Online  |  Uptime:  $UPTIME"
+    echo -e "  Version: 1.0     |  Name:    Aegis "
+    echo -e " ==================================================== "
     echo ""
 
-    # --- 4. Define Menu Options ---
+    # --- Define Menu Options ---
     MENU_OPTIONS="------ Root Only tools ------
 G-SEC : Run System Security Audit
 G-UFW : Configurator for UFW
@@ -85,8 +85,8 @@ G-Ventoy: Install or update ventoy
 
 EXIT  : Shutdown Guardian"
 
-    # --- 5. Launch fzf Menu (Now with --height) ---
-    # --height=12 forces the menu to only use 12 lines
+    # --- Launch fzf Menu  ---
+    # --height=12 forces the menu to use 12 lines. I put 16 to fit the new options.
     SELECTION=$(echo "$MENU_OPTIONS" | fzf --height=16 \
                                            --reverse \
                                            --info=hidden \
@@ -97,7 +97,7 @@ EXIT  : Shutdown Guardian"
 
     CHOICE=$(echo "$SELECTION" | awk -F':' '{print $1}' | xargs)
 
-    # --- 6. Route the Choice ---
+    # --- Route the Choice ---
     case "$CHOICE" in
         "G-SEC")  sudo ~/Guardian/scripts/G-Sec.sh; read -n 1 -s -r -p "Press any key to return...";;
         "G-PASS") clear; bash ~/Guardian/scripts/G-pass.sh; read -n 1 -s -r -p "Press any key to return...";;

@@ -14,32 +14,32 @@ G-Vault, G-pass, and G-ventoy. The general tools are available to all users on t
 
 ## 📋 Dependencies
 
-Guardian requires the following packages to run the interactive dashboard:
-* `bash` (v4.0+)
-* `fzf` (Fuzzy finder for the interactive menu)
-* `dialog` (For secondary UI elements)
+## Authorization & Rules of Engagement
 
 ## Installation
 Guardian includes an automated installation script that sets execution permissions, creates a global symlink, and registers the desktop icon. I understand it is annoying to do this manually, I am trying to set it up so it runs automatically. For now, this is the best way because it works best. An uninstall script will be comming soon and packaged with everything. during testing, it kinda nuked my downloads dir. so, it will be a bit before that's released.
 
-1. Clone the repository:
+While using Guardian, there are many risks that are associated and found, so the risk prioritization will be labeled in red for severe risk, yellow for medium risks, and green for non-essential risks that are found. Many of them can include risks such as:
 
-git clone https://github.com/Souldragon9912/Guardian.git
+* Remote administrative access through SSH  
+* Potentially users who have a UID of zero, in other words, users who have root access that potentially shouldn't
 
-3. Move to the Directory
+For example, once the CVE tool is produced for this, it will scan your system for any potential CVEs. For example, there is a zero-day attack known as “Dirty Frag” that gives root access on all major distros right now. If your system is found to have that specific CVE, it will highlight that CVE in red and give a brief description of it, and encourage the user to search and find remediation through the provided links that will be there.   
+Guardian focuses on identifying configuration based risks through analysis and inspection, rather than actively exploiting the system. Plans to implement future CVE awareness features to help out with known vulnerabilities and remediation steps is in the works as well.
 
-cd Guardian
+| Vulnerability | Severity | Likelihood | Impact | Risk Level | Justification |
+| ----- | ----- | ----- | ----- | ----- | ----- |
+| Root Access through SSH | Medium | High | High | High | The allowance of root access to SSH is a significant risk factor. With SSH providing remote administrative control, misconfigurations can lead to compromisations, and lead into full system takeover. This is why the combination of high likelihood and high impact results in an overall high risk. |
 
-6. Make sure install.sh can be executed:
+## **Engagement Overview**
 
-chmod +x install.sh
+In the event that a vulnerability is found, whether it be through G-CVE or G-SEC, it will be notified to the user through a given API and logged. At the start of Guardian it will request that information to be able to notify the user in case certain checks take longer than expected, such as a virus scan, because those can take up to two and a half to four hours.
 
-5. Execute the install script
+If there's anything found, the specific CVE that is detected through G-CVE will be highlighted in red and a brief description will be given along with a link to the database to be able to search and find possible remediation steps that are provided by Canonical.
 
-sudo ./install.sh
+### Remediation Steps
 
-## one-liner (expiremental)
-This is a new one-liner to get the install going. if its not working, please let us know.
+With the many CVEs that can be discovered through scanning, Guardian cannot and will not give any remediation steps because at the time of discovery as there may not be any known remediation steps. It will be advised to the end user to search up their specific CVE that was found through the canonical security database to find whether or not they have listed any remediation steps. If they have listed any remediation steps, it is the sole discretion of the user to determine the next steps of action. This tool only provides the ability to search. It does not provide any advice as to what to do in the event of a discovered vulnerability.
 
 ##
 git clone https://github.com/Souldragon9912/Guardian.git && cd Guardian && sudo ./G-Manager.sh
@@ -139,4 +139,3 @@ The G-Vault module is a terminal-driven cryptographic storage manager built for 
 * **Global Command Integration:** Installs natively to `/usr/local/bin` for system-wide execution.
 
 
-Once installed you should have the application show up in your applications menu or the actual command should be working and you'll just be able to type in guardian and launch it in the terminal 
