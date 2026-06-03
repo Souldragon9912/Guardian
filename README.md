@@ -3,7 +3,10 @@
 Guardian is a simple and easy-to-use tool that combines multiple different modules to perform different tasks. Each of the tools has its own priority and use cases, some being root-only and others being general use. Every tool is in one of two categories:
 
 Root Only  
-These tools consist of G-SEC, G-UFW, and G-Hardware. These tools are root-only because they make system-level changes or affect security or go in-depth further in the system that requires root permissions.
+These tools consist of G-SEC, G-UFW, and G-Hardware. These tools are root-only because they inspect system-level configurations, services, or hardware context that require elevated permissions.
+* **G-SEC:** G-SEC is used to audit system configurations, services, and privileges to identify potential security risks without automatically applying remediation changes.
+* **G-UFW:** G-UFW is used to inspect and validate firewall rules and exposure rather than automatically enforcing or modifying firewall configurations.
+* **G-HARDW:** G-HARDW provides hardware and system context such as virtualization status, disk encryption state, and firmware type to help interpret and prioritize findings from other Guardian modules. It performs inspection and validation only and does not modify system settings.
 
 General tools   
 G-Vault, G-pass, and G-ventoy. The general tools are available to all users on the system. Each one of these tools performs different tasks ranging from securely storing files to auditing the users' passwords to ensure they meet NIST guidelines. G-Ventoy is the only one that is slightly different because it is simply used to install or update pre-existing Ventoy drives if the user owns one.
