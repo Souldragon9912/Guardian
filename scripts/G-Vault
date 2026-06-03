@@ -53,7 +53,7 @@ while true; do
     # Sub-menu choices
     OPTIONS="📦 Package & Secure an Asset
 🔓 Extract or Unlock an Asset
-👀 Inspect Asset Contents (Preview)
+👀 View Vault Contents
 ❌ Exit Vault"
 
     SELECTION=$(echo "$OPTIONS" | fzf --height=10 --reverse --prompt="Select Action ❯ ")
