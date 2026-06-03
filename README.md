@@ -1,4 +1,4 @@
-# Guardian overview:
+# 🛡️ The Guardian Suite overview:
 
 Guardian is a simple and easy-to-use tool that combines multiple different modules to perform different tasks. Each of the tools has its own priority and use cases, some being root-only and others being general use. Every tool is in one of two categories:
 
@@ -7,11 +7,45 @@ These tools consist of G-SEC, G-UFW, and G-Hardware. These tools are root-only b
 * **G-SEC:** G-SEC is used to audit system configurations, services, and privileges to identify potential security risks without automatically applying remediation changes.
 * **G-UFW:** G-UFW is used to inspect and validate firewall rules and exposure rather than automatically enforcing or modifying firewall configurations.
 * **G-HARDW:** G-HARDW provides hardware and system context such as virtualization status, disk encryption state, and firmware type to help interpret and prioritize findings from other Guardian modules. It performs inspection and validation only and does not modify system settings.
-
+  
 General tools   
 G-Vault, G-pass, and G-ventoy. The general tools are available to all users on the system. Each one of these tools performs different tasks ranging from securely storing files to auditing the users' passwords to ensure they meet NIST guidelines. G-Ventoy is the only one that is slightly different because it is simply used to install or update pre-existing Ventoy drives if the user owns one.
 
+
+## 📋 Dependencies
+
+## Authorization & Rules of Engagement
+
+## Installation
+Guardian includes an automated installation script that sets execution permissions, creates a global symlink, and registers the desktop icon. I understand it is annoying to do this manually, I am trying to set it up so it runs automatically. For now, this is the best way because it works best. An uninstall script will be comming soon and packaged with everything. during testing, it kinda nuked my downloads dir. so, it will be a bit before that's released.
+
+While using Guardian, there are many risks that are associated and found, so the risk prioritization will be labeled in red for severe risk, yellow for medium risks, and green for non-essential risks that are found. Many of them can include risks such as:
+
+* Remote administrative access through SSH  
+* Potentially users who have a UID of zero, in other words, users who have root access that potentially shouldn't
+
+For example, once the CVE tool is produced for this, it will scan your system for any potential CVEs. For example, there is a zero-day attack known as “Dirty Frag” that gives root access on all major distros right now. If your system is found to have that specific CVE, it will highlight that CVE in red and give a brief description of it, and encourage the user to search and find remediation through the provided links that will be there.   
+Guardian focuses on identifying configuration based risks through analysis and inspection, rather than actively exploiting the system. Plans to implement future CVE awareness features to help out with known vulnerabilities and remediation steps is in the works as well.
+
+| Vulnerability | Severity | Likelihood | Impact | Risk Level | Justification |
+| ----- | ----- | ----- | ----- | ----- | ----- |
+| Root Access through SSH | Medium | High | High | High | The allowance of root access to SSH is a significant risk factor. With SSH providing remote administrative control, misconfigurations can lead to compromisations, and lead into full system takeover. This is why the combination of high likelihood and high impact results in an overall high risk. |
+
+## **Engagement Overview**
+
+In the event that a vulnerability is found, whether it be through G-CVE or G-SEC, it will be notified to the user through a given API and logged. At the start of Guardian it will request that information to be able to notify the user in case certain checks take longer than expected, such as a virus scan, because those can take up to two and a half to four hours.
+
+If there's anything found, the specific CVE that is detected through G-CVE will be highlighted in red and a brief description will be given along with a link to the database to be able to search and find possible remediation steps that are provided by Canonical.
+
+### Remediation Steps
+
+With the many CVEs that can be discovered through scanning, Guardian cannot and will not give any remediation steps because at the time of discovery as there may not be any known remediation steps. It will be advised to the end user to search up their specific CVE that was found through the canonical security database to find whether or not they have listed any remediation steps. If they have listed any remediation steps, it is the sole discretion of the user to determine the next steps of action. This tool only provides the ability to search. It does not provide any advice as to what to do in the event of a discovered vulnerability.
+
+##
+git clone https://github.com/Souldragon9912/Guardian.git && cd Guardian && sudo ./G-Manager.sh
 ## 
+
+Guardian is designed around assessment, inspection, and validation, with remediation actions performed manually by the user rather than enforced automatically.
 
 ## Ethical & Authorized Use Statement
 
@@ -32,7 +66,7 @@ While using Guardian, there are many risks that are associated and found, so the
 * Remote administrative access through SSH  
 * Potentially users who have a UID of zero, in other words, users who have root access that potentially shouldn't
 
-For example, once the CVE tool is produced for this, it will scan your system for any potential CVEs. For example, there is a zero-day attack known as “Dirty Frag” that gives root access on all major distros right now. If your system is found to have that specific CVE, it will highlight that CVE in red and give a brief description of it, and encourage the user to search and find remediation through the provided links that will be there.   
+For example, once the CVE tool is produced for this, it will scan your system for any potential CVEs. For example, there is a zero-day attack known as “Dirty Frag” that gives root access on all major distros right now. If your system is found to have that specific CVE, it will highlight that CVE in red and give a brief description of it, and encourage the user to search and find remediation through the provided links that will be there. This example is meant to show how serious vulnerabilities would be presented to the user, rather than reflect a currently active detection.   
 Guardian focuses on identifying configuration based risks through analysis and inspection, rather than actively exploiting the system. Plans to implement future CVE awareness features to help out with known vulnerabilities and remediation steps is in the works as well.
 
 | Vulnerability | Severity | Likelihood | Impact | Risk Level | Justification |
@@ -77,40 +111,9 @@ Due to the volatile and rapidly shifting nature of newly published exploits, the
 
 Guardian does not execute patches, configuration modifications, or provide operational fix scripts at the time of discovery, as validated remediation pathways may not yet be established by the industry.
 
-Example Output from G-Sec
-
-\[\*\] Auditing SSH Configuration...
-
-\[\!\] SSH config not found. Skipping...
-
-
-\[i\] Starting the UserID check...
-
-\[\*\] Auditing for Unauthorized Root Privileges...
-
-\[✓\] No unauthorized root accounts detected.
-
-\[\*\] Identifying listening network services...
-
-tcp   LISTEN 0      4096                     127.0.0.1:631        0.0.0.0:\*    users:(("cupsd",pid=1759,fd=7))           
-
-tcp   LISTEN 0      4096                     127.0.0.1:38689      0.0.0.0:\*    users:(("containerd",pid=1793,fd=14))     
-
-tcp   LISTEN 0      4096                 127.0.0.53%lo:53         0.0.0.0:\*    users:(("systemd-resolve",pid=423,fd=17))
-
-tcp   LISTEN 0      4096                    127.0.0.54:53         0.0.0.0:\*    users:(("systemd-resolve",pid=423,fd=19))
-
-tcp   LISTEN 0      4096                 100.120.88.38:45659      0.0.0.0:\*    users:(("tailscaled",pid=3873,fd=20))     
-
-tcp   LISTEN 0      4096                         \[::1\]:631           \[::\]:\*    users:(("cupsd",pid=1759,fd=6))           
-
-tcp   LISTEN 0      50                               \*:1716             \*:\*    users:(("kdeconnectd",pid=2848,fd=19))    
-
-tcp   LISTEN 0      4096   \[fd7a:115c:a1e0::d636:5826\]:37521         \[::\]:\*    users:(("tailscaled",pid=3873,fd=21))
-
 #  Guardian Vault
 
-The G-Vault module is a terminal-driven cryptographic storage manager built for maximum stealth, persistent metadata integrity, and anti-forensic asset handling. By utilizing a proprietary container architecture and volatile memory execution, G-Vault guarantees that secured data remains invisible and completely irretrievable post-purge.
+The G-Vault module is a terminal-driven cryptographic storage manager built for maximum stealth, persistent metadata integrity, and anti-forensic asset handling. By utilizing a proprietary container architecture and volatile memory execution, G-Vault guarantees that secured data remains invisible and completely irretrievable post-purge. This module was Ai assisted to ensure that all functions worked properly. 
 
 ## Proprietary Header Injection & Asset Architecture
 
@@ -124,4 +127,15 @@ The G-Vault module is a terminal-driven cryptographic storage manager built for 
 
 
 **End-User Agreement & Liability Waiver:** The Guardian Security Suite and G-Vault are provided "as is" without warranty of any kind, express or implied. By deploying or utilizing this vault, the user accepts 100% of the risk associated with its use, including the absolute risk of permanent data loss.
+
+
+* **G-SEC (Security Audit):** Runs a full system security check. There is a planned CVE check comming soon. Although, that might have its own option.
+* **G-PASS (Shadow Audit):** Analyzes local user passwords Against NIST Standards
+* **GUI Launcher:** Automatically generates a `.desktop` shortcut and system icon for integration into standard Linux desktop environments (like KDE/GNOME).
+* **G-HARDW:** Collects system and hardware context such as virtualization status, disk encryption state, and firmware type to help better understand security findings.
+-  Anything below this is still in the building phaze and not yet release -
+* **G-TOP (Process Monitor):** An interactive, real-time process manager.
+* **G-NET (Network/Power Diagnostics):** Scans system logs (`wtmp`, `journalctl`) to detect uncontrolled power losses, hardware disconnects, and network instability.
+* **Global Command Integration:** Installs natively to `/usr/local/bin` for system-wide execution.
+
 

@@ -15,7 +15,7 @@ spinner() {
     local i=0
     while kill -0 "$pid" 2>/dev/null; do
         i=$(( (i+1) % 4 ))
-        printf " Loading Installation Assets..." "${spin:$i:1}"
+        printf "[%c] Loading Installation Assets..." "${spin:$i:1}"
         sleep 0.2
     done
     printf "[${green}✓${nc}] Done!                  "
@@ -33,7 +33,7 @@ trap 'clear; echo "Guardian offline."; exit' SIGINT SIGTERM
 while true; do
     clear
 
-    # --- 1. The ASCII Art Header ---
+    # --- The ASCII Art Header ---
     banner=$(cat <<"EOF"
  ██████╗       ██╗   ██╗███████╗███╗   ██╗████████╗ ██████╗ ██╗   ██╗
 ██╔════╝       ██║   ██║██╔════╝████╗  ██║╚══██╔══╝██╔═══██╗╚██╗ ██╔╝
@@ -51,21 +51,20 @@ echo " "
 echo "${blue}"
 echo "$banner"
 echo "${nc}"
-echo " Welcome $USER"
-    echo -e " ==================================================== "
-    echo -e "  Node:    $NODE"
-    echo -e "  IP:      $USER_IP"
-    echo -e "  Status:  Online  |  Uptime:  $UPTIME"
-    echo -e "  Version: 1.0     |  Name:    Aegis "
-    echo -e " ==================================================== "
+echo "Welcome $USER"
+    echo -e "====================================================
+    echo -e " Node:   $NODE"
+    echo -e " IP:     $USER_IP"
+    echo -e " Status: Online  |  Uptime: $UPTIME"
+    echo -e "====================================================
     echo ""
 
-    # --- 2. Define Menu Options ---
+    # --- Define Menu Options ---
     MENU_OPTIONS="Install Ventoy
 Update Ventoy
 EXIT : Back to Guardian"
 
-    # --- 3. Launch fzf Menu ---
+    # --- Launch fzf Menu ---
     SELECTION=$(echo "$MENU_OPTIONS" | fzf --height=12 \
                                            --reverse \
                                            --info=hidden \
@@ -74,12 +73,12 @@ EXIT : Back to Guardian"
                                            --pointer="▶" \
                                            --color="fg+:10,bg+:0,hl:2,hl+:2,prompt:4,pointer:1")
 
-    # If the user hits escape or cancels fzf
+    # If user hits escape or cancels fzf
     [[ -z "$SELECTION" ]] && continue
 
     CHOICE=$(echo "$SELECTION" | awk -F':' '{print $1}' | xargs)
 
-    # --- 4. Route the Choice ---
+    # --- Route the Choice ---
     case "$CHOICE" in
         "Install Ventoy")
             clear
