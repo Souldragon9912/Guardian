@@ -15,6 +15,7 @@ Guardian has a simple way to install. There is the manual way or the one-liner.
 One-Liner
 
 git clone https://github.com/Souldragon9912/Guardian.git && cd Guardian && chmod +x G-Manager.sh && ./G-Manager.sh
+
 ==
 # Risk Prioritization
 
