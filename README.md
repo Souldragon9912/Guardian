@@ -25,22 +25,8 @@ If you prefer to review the repository before deploying the suite, you can execu
 5. bash G-Manager or ./G-Manager.sh
 
 
-# Risk Prioritization
-
-While using Guardian, there are many risks that are associated and found, so the risk prioritization will be labeled in red for severe risk, yellow for medium risks, and green for non-essential risks that are found. Many of them can include risks such as:
-
-* Remote administrative access through SSH  
-* Potentially users who have a UID of zero, in other words, users who have root access that potentially shouldn't
-
-For example, once the CVE tool is produced for this, it will scan your system for any potential CVEs. For example, there is a zero-day attack known as “Dirty Frag” that gives root access on all major distros right now. If your system is found to have that specific CVE, it will highlight that CVE in red and give a brief description of it, and encourage the user to search and find remediation through the provided links that will be there.   
-Guardian focuses on identifying configuration based risks through analysis and inspection, rather than actively exploiting the system. Plans to implement future CVE awareness features to help out with known vulnerabilities and remediation steps is in the works as well.
-
-| Vulnerability | Severity | Likelihood | Impact | Risk Level | Justification |
-| ----- | ----- | ----- | ----- | ----- | ----- |
-| Root Access through SSH | Medium | High | High | High | The allowance of root access to SSH is a significant risk factor. With SSH providing remote administrative control, misconfigurations can lead to compromisations, and lead into full system takeover. This is why the combination of high likelihood and high impact results in an overall high risk. |
-
 Engagement Overview  
-In the event that a vulnerability is found, whether it be through G-CVE or G-SEC, it will be notified to the user through a given API and logged. At the start of Guardian it will request that information to be able to notify the user in case certain checks take longer than expected, such as a virus scan, because those can take up to two and a half to four hours.
+In the event that a vulnerability is found, whether it be through G-CVE or G-SEC, it will be logged and a push notification will be sent to the desktop.
 
 If there's anything found, the specific CVE that is detected through G-CVE will be highlighted in red and a brief description will be given along with a link to the database to be able to search and find possible remediation steps that are provided by Canonical.
 
