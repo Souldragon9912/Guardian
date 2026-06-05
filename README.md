@@ -8,15 +8,23 @@ These tools consist of G-SEC, G-UFW, and G-Hardware. These tools are root-only b
 General tools   
 G-Vault, G-pass, and G-ventoy. The general tools are available to all users on the system. Each one of these tools performs different tasks ranging from securely storing files to auditing the users' passwords to ensure they meet NIST guidelines. G-Ventoy is the only one that is slightly different because it is simply used to install or update pre-existing Ventoy drives if the user owns one.
 
-==
 # Installation
 Guardian has a simple way to install. There is the manual way or the one-liner.
 
-One-Liner
 
+## One-Liner
 git clone https://github.com/Souldragon9912/Guardian.git && cd Guardian && chmod +x G-Manager.sh && ./G-Manager.sh
 
-==
+## Manual Installation
+If you prefer to review the repository before deploying the suite, you can execute the setup process step-by-step:
+
+1. Clone the repository to your local machine:
+2. git clone https://github.com/Souldragon9912/Guardian.git
+3. cd Guardian
+4. chmod +x G-Manager.sh
+5. bash G-Manager or ./G-Manager.sh
+
+
 # Risk Prioritization
 
 While using Guardian, there are many risks that are associated and found, so the risk prioritization will be labeled in red for severe risk, yellow for medium risks, and green for non-essential risks that are found. Many of them can include risks such as:
