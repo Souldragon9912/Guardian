@@ -58,7 +58,9 @@ echo "Welcome $USER"
     echo -e " Status: Online  |  Uptime: $UPTIME"
     echo -e "====================================================
     echo ""
-
+    echo " Welcome to the ventoy tool
+    Here you can install ventoy to a thumbdrive you have or update an existing one."
+    
     # --- Define Menu Options ---
     MENU_OPTIONS="Install Ventoy
 Update Ventoy
