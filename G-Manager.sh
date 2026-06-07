@@ -84,16 +84,15 @@ while true; do
             fi
 
             # --- THE LOCKDOWN PHASE ---
-            echo "[*] Applying kernel-level immutability locks (Sniper Protocol)..."
+            echo "[*] Applying locks (Sniper Protocol)..."
             [ -d "$INSTALL_DIR/scripts" ] && sudo chattr -R +i "$INSTALL_DIR/scripts/"
             [ -d "$INSTALL_DIR/icons" ] && sudo chattr -R +i "$INSTALL_DIR/icons/"
             [ -f "$INSTALL_DIR/Guardian.desktop" ] && sudo chattr +i "$INSTALL_DIR/Guardian.desktop"
             [ -f /usr/share/pixmaps/guardian-icon.png ] && sudo chattr +i /usr/share/pixmaps/guardian-icon.png
             [ -f /usr/share/applications/guardian.desktop ] && sudo chattr +i /usr/share/applications/guardian.desktop
 
-            echo -e "\n${green}[✔] Setup & Lockdown Complete!${nc}"
-            echo "Source code is frozen. You can now type 'guardian' from anywhere in your terminal."
-
+            echo -e "\n${green}[✔] Setup Complete!${nc}"
+            echo " 'guardian' is now a full system command. you can now type this in anywhere in the terminal to access Guardian, or you can use the app icon from your app menu."
             echo ""
             read -n 1 -s -r -p "Press any key to return to Manager Menu..."
             ;;
