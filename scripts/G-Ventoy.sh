@@ -15,7 +15,7 @@ spinner() {
     local i=0
     while kill -0 "$pid" 2>/dev/null; do
         i=$(( (i+1) % 4 ))
-        printf "[%c] Loading Installation Assets..." "${spin:$i:1}"
+        printf " Loading Installation Assets..." "${spin:$i:1}"
         sleep 0.2
     done
     printf "[${green}✓${nc}] Done!                  "
@@ -33,7 +33,7 @@ trap 'clear; echo "Guardian offline."; exit' SIGINT SIGTERM
 while true; do
     clear
 
-    # --- The ASCII Art Header ---
+    # --- 1. The ASCII Art Header ---
     banner=$(cat <<"EOF"
  ██████╗       ██╗   ██╗███████╗███╗   ██╗████████╗ ██████╗ ██╗   ██╗
 ██╔════╝       ██║   ██║██╔════╝████╗  ██║╚══██╔══╝██╔═══██╗╚██╗ ██╔╝
@@ -51,20 +51,23 @@ echo " "
 echo "${blue}"
 echo "$banner"
 echo "${nc}"
-echo "Welcome $USER"
-    echo -e "====================================================
-    echo -e " Node:   $NODE"
-    echo -e " IP:     $USER_IP"
-    echo -e " Status: Online  |  Uptime: $UPTIME"
-    echo -e "====================================================
+echo " Welcome $USER"
+    echo -e " ==================================================== "
+    echo -e "  Node:    $NODE"
+    echo -e "  IP:      $USER_IP"
+    echo -e "  Status:  Online  |  Uptime:  $UPTIME"
+    echo -e "  Version: 1.0     |  Name:    Aegis "
+    echo -e " ==================================================== "
     echo ""
+    echo " Welcome to the ventoy tool
+    Here you can install ventoy to a thumbdrive you have or update an existing one."
 
-    # --- Define Menu Options ---
+    # --- 2. Define Menu Options ---
     MENU_OPTIONS="Install Ventoy
 Update Ventoy
 EXIT : Back to Guardian"
 
-    # --- Launch fzf Menu ---
+    # --- 3. Launch fzf Menu ---
     SELECTION=$(echo "$MENU_OPTIONS" | fzf --height=12 \
                                            --reverse \
                                            --info=hidden \
@@ -73,17 +76,17 @@ EXIT : Back to Guardian"
                                            --pointer="▶" \
                                            --color="fg+:10,bg+:0,hl:2,hl+:2,prompt:4,pointer:1")
 
-    # If user hits escape or cancels fzf
+    # If the user hits escape or cancels fzf
     [[ -z "$SELECTION" ]] && continue
 
     CHOICE=$(echo "$SELECTION" | awk -F':' '{print $1}' | xargs)
 
-    # --- Route the Choice ---
+    # --- 4. Route the Choice ---
     case "$CHOICE" in
         "Install Ventoy")
             clear
             echo "${blue}$banner${nc}"
-            echo -e "\n${red}⚠️  WARNING! THIS INSTALLATION WILL COMPLETELY FORMAT THE DRIVE ⚠️${nc}\n"
+            echo -e "${red}⚠️  WARNING! THIS INSTALLATION WILL COMPLETELY FORMAT THE DRIVE ⚠️${nc}\n"
 
             while true; do
                 read -rp "Are you absolutely sure you want to proceed? (y/n): " -n 1 yn
@@ -95,7 +98,7 @@ EXIT : Back to Guardian"
                 esac
             done
 
-            echo -e "\n[*] Pulling Ventoy Linux Release package from GitHub..."
+            echo -e "[*] Pulling Ventoy Linux Release package from GitHub..."
 
             # Run wget in the background so we can anchor the spinner to its process ID ($!)
             mkdir -p "$HOME/Downloads/Ventoy_interactive"
