@@ -3,6 +3,7 @@
 # Aegis v1
 # Ant2-2
 # Souldragon9912
+# Copilot and Claude helped me clean up and refine some of this code.
 
 # Colors
 red=$(tput setaf 1)
@@ -52,7 +53,6 @@ EOF
 #                           START OF SCRIPT
 # ====================================================================
 
-# Copilot and Claude helped me clean up and refine some of this code.
 
 # Root check
 if [ "$EUID" -ne 0 ]; then
