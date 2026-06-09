@@ -79,13 +79,6 @@ echo
 echo
 sleep 2
 
-clear
-echo "${blue}"
-echo "$banner"
-echo "${nc}"
-  echo "welcome to the system auditor!
-here we will run a few tests to make sure your system is not only up-to-date, but safe."
-
 # --- SYSTEM IDENTITY HEADER ---
 echo "${cyan}"
 cat <<"EOF" | tee -a "$LOG_FILE"
@@ -149,11 +142,7 @@ echo "${nc}"
 sleep 2
 
 # ================= SSH section ===============
-clear
-# banner paste
-echo "${blue}"
-echo "$banner"
-echo "${nc}"
+
 
 echo "[*] Auditing SSH Configuration..."
 if [ ! -f /etc/ssh/sshd_config ]; then
@@ -210,4 +199,3 @@ ss -tulpn | grep LISTEN | tee -a "$LOG_FILE"
 
 sleep 3
 echo " Thank you for using the system auditor!"
-
