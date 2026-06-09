@@ -22,11 +22,19 @@ spinner() {
         printf " Checking..." "${spin:$i:1}"
         sleep 1
     done
-    printf "\r[✓] Done!          \n"
+    printf "\r[✓] Done!                            \n"
     sleep 2
 }
+# --------------------------------------------------------------
+ACTUAL_USER=${SUDO_USER:-$USER}
 
-LOG_FILE="/home/brendan/Guardian/Logs/Audit-log.txt"
+USER_HOME=$(getent passwd "$ACTUAL_USER" | cut -d: -f6)
+
+LOG_DIR="$USER_HOME/Guardian/Logs"
+LOG_FILE="$LOG_DIR/Audit-log.txt"
+
+mkdir -p "$LOG_DIR"
+# --------------------------------------------------------------
 
 echo -e "$CHECK Audit Complete"
 echo -e "$CROSS Vulnerability Found"
@@ -53,6 +61,13 @@ echo "$banner" > "$LOG_FILE"
 #                                                               START OF SCRIPT
 # ====================================================================================================================================
 clear
+
+# ROOT CHECK
+if [ "$EUID" -ne 0 ]; then
+  whiptail --title "Error" --msgbox "In order for the audit to continue, this must be run as root." 8 45
+  exit 1
+fi
+
 # banner paste
 echo "${blue}"
 echo "$banner"
@@ -63,12 +78,6 @@ here we will run a few tests to make sure your system is not only up-to-date, bu
 echo
 echo
 sleep 2
-
-# ROOT CHECK
-if [ "$EUID" -ne 0 ]; then
-  whiptail --title "Error" --msgbox "In order for the audit to continue, this must be run as root." 8 45
-  exit 1
-fi
 
 clear
 echo "${blue}"
