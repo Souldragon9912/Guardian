@@ -108,12 +108,6 @@ echo -e "SHELL ENV  : $CURRENT_SHELL" | tee -a "$LOG_FILE"
 echo "==========================================" | tee -a "$LOG_FILE"
 sleep 1
 
-# pasword check section
-clear
-# banner paste
-echo "${blue}"
-echo "$banner"
-echo "${nc}"
 
  echo "For this next step, we will need your password. It will be used to check if it's strong enough."
 
@@ -152,14 +146,6 @@ echo "${nc}"
     echo "---------------------------------------------" >> "$LOG_FILE"
     echo "password section complete. Moving on to ssh.." >> "$LOG_FILE"
     echo "---------------------------------------------" >> "$LOG_FILE"
-
-sleep 1
-
-clear
-# banner paste
-echo "${blue}"
-echo "$banner"
-echo "${nc}"
 sleep 2
 
 # ================= SSH section ===============
@@ -222,6 +208,6 @@ ss -tulpn | grep LISTEN | tee -a "$LOG_FILE"
 
 # ------------------------- CVE Section Complete --------------------------------------
 
-sleep 1
+sleep 3
 echo " Thank you for using the system auditor!"
 
