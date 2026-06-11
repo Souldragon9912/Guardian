@@ -1,10 +1,14 @@
 #!/bin/bash
 # Guardian Module: G-Hardware
+# Aegis v1
+# Ant2-2
+# Souldragon9912
 
 # Colors
 red=$(tput setaf 1)
 green=$(tput setaf 2)
 yellow=$(tput setaf 3)
+cyan=$(tput setaf 6)
 nc=$(tput sgr0)
 
 CHECK="${green}[✓]${nc}"
@@ -12,13 +16,30 @@ WARN="${yellow}[!]${nc}"
 FAIL="${red}[X]${nc}"
 INFO="[i]"
 
-MAIN_LOG="$HOME/Guardian/Logs/Audit-log.txt"
-HW_LOG="$HOME/Guardian/Logs/hardware-log.txt"
+    UPTIME=$(uptime -p | sed 's/up //')
+    USER_IP=$(hostname -I | awk '{print $1}')
+    NODE=$(hostname)
+    USER=$(whoami)
 
-## Safe defaults
+# Figure out where Guardian is installed so logs go to the right place
+# This script lives in Guardian/scripts/ so we go up one level to find Logs/
+GUARDIAN_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+MAIN_LOG="$GUARDIAN_ROOT/Logs/Audit-log.txt"
+HW_LOG="$GUARDIAN_ROOT/Logs/hardware-log.txt"
+
+# Make sure the log folder exists before we try writing to it
+mkdir -p "$GUARDIAN_ROOT/Logs"
+
+# Safe defaults so the summary never shows a blank value
 VM_FLAG="unknown"
 ENC_FLAG="unknown"
 FW_FLAG="unknown"
+TPM_FLAG="unknown"
+DISK_HEALTH_FLAG="unknown"
+CPU_BENCH="not run"
+STORAGE_BENCH="not run"
+GPU_INFO="unavailable"
+CPU_TEMP="unavailable"
 
 ## ===== Banner =====
 banner=$(
@@ -31,40 +52,57 @@ cat << "EOF"
  ╚═════╝       ╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝  ╚══╝╚══╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝
 EOF
 )
-# Souldragon912
-# Ant2-2
 
-# ====================================================================================================================================
-#                                                               START OF SCRIPT
-# ====================================================================================================================================
+# ====================================================================
+#                           START OF SCRIPT
+# ====================================================================
 
-# ROOT CHECK
+
+# Root check
 if [ "$EUID" -ne 0 ]; then
-  whiptail --title "Error" --msgbox "In order for the audit to continue, this must be run as root." 8 45
-  exit 1
+    echo "${red}[X] This script needs to be run as root.${nc}"
+    exit 1
 fi
 
+# Write a clean header to the log files instead of dumping the banner art in there
+echo "Guardian Hardware Audit - $(date)" > "$MAIN_LOG" 2>/dev/null
+echo "Guardian Hardware Audit - $(date)" > "$HW_LOG" 2>/dev/null
+echo "----------------------------------------" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+
 clear
+echo " "
+echo " "
+echo "${cyan}$banner${nc}"
+echo " Welcome $USER"
+echo -e " ==================================================== "
+echo -e "  Node:    $NODE"
+echo -e "  IP:      $USER_IP"
+echo -e "  Status:  Online  |  Uptime:  $UPTIME"
+echo -e "  Version: 1.1     |  Name:    Aegis "
+echo -e " ==================================================== "
 echo ""
+echo "Welcome to Guardian Hardware Inspection"
+echo "Here we will check your hardware and VM environment to make sure things are running properly."
 echo ""
-echo "$banner" | tee "$MAIN_LOG" "$HW_LOG"
-echo "welcome to Guardian Hardare inspection
-Here we will test for a few things to make sure your hardare or VM are working properly"
+read -n 1 -s -r -p "Press any key to begin the inspection..."
+echo ""
+sleep 1
 
-read -n 1 -s -r -p "Press any key to begin the test..."
-sleep 2
-
-echo "$INFO Starting hardware inspection..." | tee -a "$MAIN_LOG" "$HW_LOG"
-echo "----------------------------------------" | tee -a "$MAIN_LOG" "$HW_LOG"
+echo ""
+echo "$INFO Starting hardware inspection..." | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
 
 ## ===== SYSTEM CONTEXT =====
-echo -e "\n----------------------------------------" | tee -a "$MAIN_LOG" "$HW_LOG"
-echo "$INFO System Context" | tee -a "$MAIN_LOG" "$HW_LOG"
-echo "----------------------------------------" | tee -a "$MAIN_LOG" "$HW_LOG"
+echo -e "\n----------------------------------------" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+echo "$INFO System Context" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+echo "----------------------------------------" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
 
-echo "$INFO Collecting system info..." | tee -a "$MAIN_LOG" "$HW_LOG"
+HOSTNAME_VAL=$(hostname)
+KERNEL=$(uname -r)
+OS=$(grep PRETTY_NAME /etc/os-release 2>/dev/null | cut -d= -f2 | tr -d '"')
 
-HOSTNAME=$(hostname)
+echo "Hostname        : $HOSTNAME_VAL" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+echo "OS              : ${OS:-Unavailable}" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+echo "Kernel          : $KERNEL" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
 
 if command -v systemd-detect-virt >/dev/null 2>&1; then
     VIRT=$(systemd-detect-virt)
@@ -72,179 +110,282 @@ else
     VIRT="unknown"
 fi
 
-echo "Hostname        : $HOSTNAME" | tee -a "$MAIN_LOG" "$HW_LOG"
-echo "Virtualization  : $VIRT" | tee -a "$MAIN_LOG" "$HW_LOG"
+echo "Virtualization  : $VIRT" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
 
 if [[ "$VIRT" != "none" && "$VIRT" != "unknown" ]]; then
-    echo "$WARN Running in virtualized environment" | tee -a "$MAIN_LOG" "$HW_LOG"
+    echo "$WARN Running in a virtualized environment" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
     VM_FLAG="yes"
 else
-    echo "$CHECK Running on bare metal" | tee -a "$MAIN_LOG" "$HW_LOG"
+    echo "$CHECK Running on bare metal" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
     VM_FLAG="no"
 fi
 
 ## ===== CPU =====
-echo -e "\n----------------------------------------" | tee -a "$MAIN_LOG" "$HW_LOG"
-echo "$INFO CPU Information" | tee -a "$MAIN_LOG" "$HW_LOG"
-echo "----------------------------------------" | tee -a "$MAIN_LOG" "$HW_LOG"
+echo -e "\n----------------------------------------" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+echo "$INFO CPU Information" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+echo "----------------------------------------" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
 
-if command -v lscpu >/dev-null 2>&1; then
-    echo "$INFO Collecting CPU info..." | tee -a "$MAIN_LOG" "$HW_LOG"
-
+if command -v lscpu >/dev/null 2>&1; then
     CPU_MODEL=$(lscpu | grep "Model name" | cut -d':' -f2 | sed 's/^ *//')
     CPU_CORES=$(nproc)
+    CPU_ARCH=$(lscpu | grep "Architecture" | cut -d':' -f2 | sed 's/^ *//')
 
-    echo "CPU Model       : $CPU_MODEL" | tee -a "$MAIN_LOG" "$HW_LOG"
-    echo "CPU Cores       : $CPU_CORES" | tee -a "$MAIN_LOG" "$HW_LOG"
+    echo "CPU Model       : $CPU_MODEL" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+    echo "Architecture    : $CPU_ARCH" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+    echo "CPU Cores       : $CPU_CORES" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
 
-    if lscpu | grep -qE "vmx|svm"; then
-        echo "$CHECK Virtualization support detected" | tee -a "$MAIN_LOG" "$HW_LOG"
+    if lscpu | grep -qiE "vmx|svm"; then
+        echo "$CHECK Virtualization extensions detected (VMX/SVM)" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
     else
-        echo "$WARN No virtualization extensions detected" | tee -a "$MAIN_LOG" "$HW_LOG"
+        echo "$WARN No hardware virtualization extensions found" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
     fi
 else
-    echo "$FAIL lscpu not found, skipping CPU" | tee -a "$MAIN_LOG" "$HW_LOG"
+    echo "$FAIL lscpu not found, skipping CPU section" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+fi
+
+# CPU temperature - requires lm-sensors
+if command -v sensors >/dev/null 2>&1; then
+    TEMP_RAW=$(sensors 2>/dev/null | grep -iE "core 0|cpu temp|package id 0" | head -1 | grep -oE '\+[0-9]+\.[0-9]+°C' | head -1)
+    if [[ -n "$TEMP_RAW" ]]; then
+        CPU_TEMP="$TEMP_RAW"
+        TEMP_NUM=$(echo "$TEMP_RAW" | grep -oE '[0-9]+' | head -1)
+        if [[ "$TEMP_NUM" -ge 85 ]]; then
+            echo "$FAIL CPU Temp: $CPU_TEMP — Critical, check your cooling" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+        elif [[ "$TEMP_NUM" -ge 70 ]]; then
+            echo "$WARN CPU Temp: $CPU_TEMP — Running warm" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+        else
+            echo "$CHECK CPU Temp: $CPU_TEMP — Normal" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+        fi
+    else
+        echo "$WARN Could not read CPU temperature" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+        CPU_TEMP="unreadable"
+    fi
+else
+    echo "$WARN lm-sensors not installed (sudo apt install lm-sensors)" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+    CPU_TEMP="lm-sensors not installed"
 fi
 
 ## ===== MEMORY =====
-echo -e "\n----------------------------------------" | tee -a "$MAIN_LOG" "$HW_LOG"
-echo "$INFO Memory Information" | tee -a "$MAIN_LOG" "$HW_LOG"
-echo "----------------------------------------" | tee -a "$MAIN_LOG" "$HW_LOG"
+echo -e "\n----------------------------------------" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+echo "$INFO Memory Information" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+echo "----------------------------------------" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
 
 if command -v free >/dev/null 2>&1; then
-    free -h | tee -a "$MAIN_LOG" "$HW_LOG"
+    MEM_TOTAL=$(free -h | awk '/^Mem:/ {print $2}')
+    MEM_USED=$(free -h | awk '/^Mem:/ {print $3}')
+    MEM_AVAIL=$(free -h | awk '/^Mem:/ {print $7}')
+    SWAP_USED=$(free -h | awk '/^Swap:/ {print $3}')
+
+    echo "Total RAM       : $MEM_TOTAL" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+    echo "Used            : $MEM_USED" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+    echo "Available       : $MEM_AVAIL" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+    echo "Swap Used       : $SWAP_USED" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+
+    # Check if swap is being used heavily which can mean RAM is running low
+    SWAP_USED_KB=$(free | awk '/^Swap:/ {print $3}')
+    if [[ "$SWAP_USED_KB" -gt 524288 ]]; then
+        echo "$WARN High swap usage - system may be low on RAM" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+    else
+        echo "$CHECK Swap usage looks fine" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+    fi
 else
-    echo "$FAIL free command not available" | tee -a "$MAIN_LOG" "$HW_LOG"
+    echo "$FAIL free command not available" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
 fi
 
 ## ===== STORAGE =====
-echo -e "\n----------------------------------------" | tee -a "$MAIN_LOG" "$HW_LOG"
-echo "$INFO Storage Devices" | tee -a "$MAIN_LOG" "$HW_LOG"
-echo "----------------------------------------" | tee -a "$MAIN_LOG" "$HW_LOG"
+echo -e "\n----------------------------------------" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+echo "$INFO Storage Devices" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+echo "----------------------------------------" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
 
 if command -v lsblk >/dev/null 2>&1; then
-    lsblk -o NAME,SIZE,TYPE,MOUNTPOINT,FSTYPE | tee -a "$MAIN_LOG" "$HW_LOG"
+    lsblk -o NAME,SIZE,TYPE,MOUNTPOINT,FSTYPE 2>/dev/null | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+    echo "" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
 
-    if lsblk -o FSTYPE | grep -qiE "crypt|luks"; then
+    # Show disk usage
+    echo "Disk Usage:" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+    df -h 2>/dev/null | grep -v tmpfs | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+
+    # Check for LUKS encryption
+    if lsblk -o FSTYPE 2>/dev/null | grep -qiE "crypto_LUKS|crypt"; then
         ENC_FLAG="yes"
-        echo "$CHECK Encrypted storage detected" | tee -a "$MAIN_LOG" "$HW_LOG"
+        echo "$CHECK Encrypted storage detected (LUKS)" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
     else
         ENC_FLAG="no"
-        echo "$WARN No disk encryption detected" | tee -a "$MAIN_LOG" "$HW_LOG"
+        echo "$WARN No disk encryption detected" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
     fi
 else
-    echo "$FAIL lsblk not found" | tee -a "$MAIN_LOG" "$HW_LOG"
+    echo "$FAIL lsblk not found" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
 fi
 
-echo "------- SMART test -------"
-# B.E.
-echo -e "\n[*] Auditing Physical Storage Media Health (SMART)..." | tee -a "$MAIN_LOG" "$HW_LOG"
+## ===== SMART HEALTH =====
+echo -e "\n----------------------------------------" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+echo "$INFO SMART Drive Health" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+echo "----------------------------------------" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
 
-# Loop through primary nvme or sd disk blocks (excluding partition slices like nvme0n1p1)
-for disk in $(lsblk -dno NAME | grep -E 'nvme|sd'); do
-    if command -v smartctl &> /dev/null; then
-        # Check overall health status using standard smartctl evaluation
-        if sudo smartctl -H "/dev/$disk" | grep -q "PASSED"; then
-            echo "$CHECK Drive /dev/$disk physical health: PASSED" | tee -a "$MAIN_LOG" "$HW_LOG"
-            DISK_HEALTH_FLAG="passed"
-        else
-            echo "$FAIL Drive /dev/$disk reporting physical hardware degradation!" | tee -a "$MAIN_LOG" "$HW_LOG"
+DISKS=$(lsblk -dno NAME 2>/dev/null | grep -E "^(nvme|sd|vd)")
+
+if [[ -z "$DISKS" ]]; then
+    echo "$WARN No physical drives found to test" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+    DISK_HEALTH_FLAG="no_disks"
+elif ! command -v smartctl >/dev/null 2>&1; then
+    echo "$WARN smartctl not found - install smartmontools to enable drive health checks" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+    echo "    sudo apt install smartmontools" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+    DISK_HEALTH_FLAG="unsupported"
+else
+    DISK_HEALTH_FLAG="passed"
+    for disk in $DISKS; do
+        RESULT=$(smartctl -H "/dev/$disk" 2>/dev/null)
+        if echo "$RESULT" | grep -q "PASSED"; then
+            echo "$CHECK /dev/$disk - SMART health: PASSED" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+        elif echo "$RESULT" | grep -q "FAILED"; then
+            echo "$FAIL /dev/$disk - SMART health: FAILED - possible drive failure!" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
             DISK_HEALTH_FLAG="failed"
+        else
+            echo "$WARN /dev/$disk - SMART result inconclusive (common on virtual disks)" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+        fi
+    done
+fi
+
+## ===== GPU =====
+echo -e "\n----------------------------------------" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+echo "$INFO GPU Information" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+echo "----------------------------------------" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+
+if command -v lspci >/dev/null 2>&1; then
+    GPU_RAW=$(lspci 2>/dev/null | grep -iE "VGA|3D|Display")
+    if [[ -n "$GPU_RAW" ]]; then
+        GPU_INFO=$(echo "$GPU_RAW" | sed 's/.*: //')
+        echo "GPU             : $GPU_INFO" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+
+        # If nvidia-smi is available we can get more detail like temps and VRAM
+        if command -v nvidia-smi >/dev/null 2>&1; then
+            NVIDIA_INFO=$(nvidia-smi --query-gpu=name,memory.total,temperature.gpu,driver_version --format=csv,noheader 2>/dev/null)
+            if [[ -n "$NVIDIA_INFO" ]]; then
+                echo "NVIDIA Details  : $NVIDIA_INFO" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+            fi
         fi
     else
-        echo "$WARN smartctl utility missing. Cannot poll hardware diagnostics." | tee -a "$MAIN_LOG" "$HW_LOG"
-        DISK_HEALTH_FLAG="unsupported"
-        break
+        GPU_INFO="none detected"
+        echo "$WARN No GPU detected via lspci" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
     fi
-done
-# B.E.
-
-## ===== HARDWARE BENCHMARKING =====
-echo -e "\n[*] Running Background Hardware Benchmarks..." >> "$HW_LOG"
-
-# A. CPU Integer Math Performance Test
-if command -v sysbench &> /dev/null; then
-    echo "  -> Processing CPU Prime Stress Test (Single-Thread)..." >> "$HW_LOG"
-    # Runs a quick 5-second calculation check up to 10,000 primes
-    cpu_score=$(sysbench cpu --cpu-max-prime=10000 --time=5 run | grep "events per second:" | awk '{print $4}')
-    CPU_BENCH="${cpu_score} eps (events per-second)"
 else
-    CPU_BENCH="Unsupported (Install sysbench)"
-fi
-
-# B. Storage Drive Write Speed Test
-echo "  -> Processing Storage Write Performance Test..." >> "$HW_LOG"
-# Safely writes a temporary 512MB file to check raw throughput, then cleans up
-if command -v dd &> /dev/null; then
-    write_speed=$(dd if=/dev/zero of=./.bench_tmp bs=1M count=512 conv=fdatasync 2>&1 | grep -oE '[0-9.]+ [KMGT]?B/s')
-    rm -f ./.bench_tmp
-    STORAGE_BENCH="$write_speed"
-else
-    STORAGE_BENCH="Unknown"
+    echo "$WARN lspci not found - skipping GPU check" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+    GPU_INFO="lspci unavailable"
 fi
 
 ## ===== NETWORK =====
-echo -e "\n----------------------------------------" | tee -a "$MAIN_LOG" "$HW_LOG"
-echo "$INFO Network Interfaces" | tee -a "$MAIN_LOG" "$HW_LOG"
-echo "----------------------------------------" | tee -a "$MAIN_LOG" "$HW_LOG"
+echo -e "\n----------------------------------------" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+echo "$INFO Network Interfaces" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+echo "----------------------------------------" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
 
 if command -v ip >/dev/null 2>&1; then
-    ip -brief link | tee -a "$MAIN_LOG" "$HW_LOG"
+    ip -brief link 2>/dev/null | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
 else
-    echo "$FAIL ip command not found" | tee -a "$MAIN_LOG" "$HW_LOG"
+    echo "$FAIL ip command not found" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
 fi
 
 ## ===== FIRMWARE =====
-echo -e "\n----------------------------------------" | tee -a "$MAIN_LOG" "$HW_LOG"
-echo "$INFO Firmware Information" | tee -a "$MAIN_LOG" "$HW_LOG"
-echo "----------------------------------------" | tee -a "$MAIN_LOG" "$HW_LOG"
+echo -e "\n----------------------------------------" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+echo "$INFO Firmware Information" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+echo "----------------------------------------" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
 
 BIOS_VENDOR=$(cat /sys/class/dmi/id/bios_vendor 2>/dev/null)
 BIOS_VERSION=$(cat /sys/class/dmi/id/bios_version 2>/dev/null)
 
-echo "BIOS Vendor     : ${BIOS_VENDOR:-Unavailable}" | tee -a "$MAIN_LOG" "$HW_LOG"
-echo "BIOS Version    : ${BIOS_VERSION:-Unavailable}" | tee -a "$MAIN_LOG" "$HW_LOG"
+echo "BIOS Vendor     : ${BIOS_VENDOR:-Unavailable}" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+echo "BIOS Version    : ${BIOS_VERSION:-Unavailable}" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
 
 if [[ -d /sys/firmware/efi ]]; then
     FW_FLAG="uefi"
-    echo "$CHECK UEFI detected" | tee -a "$MAIN_LOG" "$HW_LOG"
+    echo "$CHECK UEFI detected" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
 else
     FW_FLAG="bios"
-    echo "$WARN Legacy BIOS mode detected" | tee -a "$MAIN_LOG" "$HW_LOG"
+    echo "$WARN Legacy BIOS detected - UEFI is recommended for better security" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
 fi
 
+## ===== TPM =====
+echo -e "\n----------------------------------------" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+echo "$INFO TPM (Trusted Platform Module)" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+echo "----------------------------------------" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+
+# Check for a TPM chip - it shows up as a device file if present
+if [[ -e /dev/tpm0 || -e /dev/tpmrm0 ]]; then
+    TPM_FLAG="present"
+    echo "$CHECK TPM chip detected" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+elif [[ -d /sys/class/tpm ]] && [[ -n "$(ls /sys/class/tpm/ 2>/dev/null)" ]]; then
+    TPM_FLAG="present"
+    echo "$CHECK TPM detected" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+else
+    TPM_FLAG="missing"
+    echo "$WARN No TPM chip detected" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+fi
+
+## ===== BENCHMARKS =====
+echo -e "\n----------------------------------------" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+echo "$INFO Hardware Benchmarks" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+echo "----------------------------------------" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+
+# CPU benchmark using sysbench
+if command -v sysbench >/dev/null 2>&1; then
+    echo "$INFO Running CPU benchmark (5 seconds)..."
+    cpu_score=$(sysbench cpu --cpu-max-prime=10000 --time=5 run 2>/dev/null | grep "events per second:" | awk '{print $4}')
+    CPU_BENCH="${cpu_score} events/sec"
+    echo "$CHECK CPU Benchmark    : $CPU_BENCH" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+else
+    CPU_BENCH="sysbench not installed"
+    echo "$WARN CPU Benchmark    : $CPU_BENCH" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+    echo "    Install with: sudo apt install sysbench" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+fi
+
+# Storage write speed test - writes a temp file to /tmp and cleans it up
+echo "$INFO Running storage write benchmark (512MB)..."
+BENCH_TMP="/tmp/guardian_bench_$$"
+write_speed=$(dd if=/dev/zero of="$BENCH_TMP" bs=1M count=512 conv=fdatasync 2>&1 | grep -oE '[0-9.]+ [KMGT]?B/s' | tail -1)
+rm -f "$BENCH_TMP"
+STORAGE_BENCH="${write_speed:-measurement failed}"
+echo "$CHECK Storage Speed   : $STORAGE_BENCH" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
 
 ## ===== SECURITY OBSERVATIONS =====
-echo -e "\n----------------------------------------" | tee -a "$MAIN_LOG" "$HW_LOG"
-echo "$INFO Security Observations" | tee -a "$MAIN_LOG" "$HW_LOG"
+echo -e "\n----------------------------------------" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+echo "$INFO Security Observations" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+echo "----------------------------------------" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
 
-echo "----------------------------------------" | tee -a "$MAIN_LOG" "$HW_LOG"
+[[ "$VM_FLAG" == "yes" ]]                  && echo "$WARN Running in VM environment" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+[[ "$ENC_FLAG" == "no" ]]                  && echo "$WARN No disk encryption detected" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+[[ "$FW_FLAG" == "bios" ]]                 && echo "$WARN Legacy BIOS reduces security posture" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+[[ "$TPM_FLAG" == "missing" ]]             && echo "$WARN No TPM chip - hardware key storage unavailable" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+[[ "$DISK_HEALTH_FLAG" == "failed" ]]      && echo "$FAIL CRITICAL: Drive failure detected - back up your data now!" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+[[ "$DISK_HEALTH_FLAG" == "unsupported" ]] && echo "$WARN Install smartmontools for drive health checks" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
 
-[[ "$VM_FLAG" == "yes" ]] && echo "$WARN Running in VM environment" | tee -a "$MAIN_LOG" "$HW_LOG"
-[[ "$ENC_FLAG" == "no" ]] && echo "$WARN No disk encryption detected" | tee -a "$MAIN_LOG" "$HW_LOG"
-[[ "$FW_FLAG" == "bios" ]] && echo "$WARN Legacy BIOS mode reduces security thresholds" | tee -a "$MAIN_LOG" "$HW_LOG"
-[[ "$TPM_FLAG" == "missing" ]] && echo "$WARN Missing TPM chip limits hardware cryptographic binding" | tee -a "$MAIN_LOG" "$HW_LOG"
-[[ "$DISK_HEALTH_FLAG" == "failed" ]] && echo "$FAIL CRITICAL: Physical storage hardware failure imminent!" | tee -a "$MAIN_LOG" "$HW_LOG"
-[[ "$DISK_HEALTH_FLAG" == "unsupported" ]] && echo "$WARN Install smartmontools package for deep media auditing" | tee -a "$MAIN_LOG" "$HW_LOG"
-
-# ================ End Of Script =================
+# ====================================================================
+#                           END OF SCRIPT
+# ====================================================================
 
 sleep 2
 clear
 echo ""
-echo ""
-echo "$banner"
+echo "${cyan}$banner${nc}"
 
-## ===== SUMMARY =====
-echo -e "\n----------------------------------------" | tee -a "$MAIN_LOG" "$HW_LOG"
-echo "${green}SYSTEM SUMMARY${nc}" | tee -a "$MAIN_LOG" "$HW_LOG"
-echo "----------------------------------------" | tee -a "$MAIN_LOG" "$HW_LOG"
+echo -e "\n----------------------------------------" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+echo "${green}SYSTEM SUMMARY${nc}" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+echo "----------------------------------------" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
 
-echo "Virtualized      : ${VIRT:-Unknown}" | tee -a "$MAIN_LOG" "$HW_LOG"
-echo "Disk Encryption  : ${ENC_FLAG^^}" | tee -a "$MAIN_LOG" "$HW_LOG"
-echo "Firmware Mode    : ${FW_FLAG^^}" | tee -a "$MAIN_LOG" "$HW_LOG"
-echo "TPM Hardware     : ${TPM_FLAG^^}" | tee -a "$MAIN_LOG" "$HW_LOG"
-echo "Storage Health   : ${DISK_HEALTH_FLAG^^}" | tee -a "$MAIN_LOG" "$HW_LOG"
-echo "CPU Benchmark    : $CPU_BENCH" | tee -a "$MAIN_LOG" "$HW_LOG"
-echo "Storage Speed    : $STORAGE_BENCH" | tee -a "$MAIN_LOG" "$HW_LOG"
+echo "Hostname        : $HOSTNAME_VAL" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+echo "Virtualized     : $VIRT" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+echo "Firmware        : ${FW_FLAG^^}" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+echo "Disk Encryption : ${ENC_FLAG^^}" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+echo "TPM Chip        : ${TPM_FLAG^^}" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+echo "Drive Health    : ${DISK_HEALTH_FLAG^^}" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+echo "CPU Temp        : $CPU_TEMP" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+echo "GPU             : $GPU_INFO" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+echo "CPU Benchmark   : $CPU_BENCH" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+echo "Storage Speed   : $STORAGE_BENCH" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+echo "" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+echo "Full log saved to: $HW_LOG" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+
+
+
+echo "
+Thank you for using Guardian Hardware!
+"
 exit 0

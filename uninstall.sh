@@ -2,7 +2,7 @@
 
 # --- Guardian Suite: Uninstaller ---
 
-echo -e "\e[1;31m🛡️  Uninstalling Guardian Security Suite...\e[0m"
+echo -e "🛡️  Uninstalling Guardian Security Suite..."
 
 # 1. Check for root privileges
 if [ "$EUID" -ne 0 ]; then
@@ -33,5 +33,5 @@ if [ -f /usr/share/applications/guardian.desktop ]; then
     fi
 fi
 
-echo -e "\e[1;32m✅ Uninstallation Complete!\e[0m"
+echo -e "✅ Uninstallation Complete!"
 echo "Note: The project folder itself was not deleted. You can remove it manually with 'rm -rf'."

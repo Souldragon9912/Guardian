@@ -13,9 +13,22 @@ nc=$(tput sgr0)
 
 while true; do
     clear
-    echo "${cyan}=======================================================${nc}"
-    echo "              🛡️ GUARDIAN SUITE MANAGER"
-    echo "${cyan}=======================================================${nc}"
+    echo "${cyan}"
+    echo "
+ ██████╗ ██╗   ██╗ █████╗ ██████╗ ██████╗ ██╗ █████╗ ███╗   ██╗
+██╔════╝ ██║   ██║██╔══██╗██╔══██╗██╔══██╗██║██╔══██╗████╗  ██║
+██║  ███╗██║   ██║███████║██████╔╝██║  ██║██║███████║██╔██╗ ██║
+██║   ██║██║   ██║██╔══██║██╔══██╗██║  ██║██║██╔══██║██║╚██╗██║
+╚██████╔╝╚██████╔╝██║  ██║██║  ██║██████╔╝██║██║  ██║██║ ╚████║
+ ╚═════╝  ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚═════╝ ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝
+
+███╗   ███╗ █████╗ ███╗   ██╗ █████╗  ██████╗ ███████╗██████╗
+████╗ ████║██╔══██╗████╗  ██║██╔══██╗██╔════╝ ██╔════╝██╔══██╗
+██╔████╔██║███████║██╔██╗ ██║███████║██║  ███╗█████╗  ██████╔╝
+██║╚██╔╝██║██╔══██║██║╚██╗██║██╔══██║██║   ██║██╔══╝  ██╔══██╗
+██║ ╚═╝ ██║██║  ██║██║ ╚████║██║  ██║╚██████╔╝███████╗██║  ██║
+╚═╝     ╚═╝╚═╝  ╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝ ╚═════╝ ╚══════╝╚═╝  ╚═╝ "
+    echo "${nc}"
     echo ""
     echo "1) Install or Update Guardian"
     echo "2) Change System Icon (Hot-Swap)"
@@ -26,10 +39,10 @@ while true; do
 
     case $choice in
         1)
-            echo -e "\n[*] Initializing Installation / Update Protocol..."
+            echo -e "[*] Initializing Installation / Update Protocol..."
             sleep 1
 
-            # --- THE UNLOCK PHASE ---
+            # --- UNLOCK PHASE ---
             echo "[i] Disabling existing immutability locks for secure update..."
             sudo chattr -R -i "$INSTALL_DIR" 2>/dev/null || true
             sudo chattr -i /usr/share/pixmaps/guardian-icon.png 2>/dev/null || true
@@ -83,7 +96,7 @@ while true; do
                 fi
             fi
 
-            # --- THE LOCKDOWN PHASE ---
+            # --- LOCKDOWN PHASE ---
             echo "[*] Applying kernel-level immutability locks (Sniper Protocol)..."
             [ -d "$INSTALL_DIR/scripts" ] && sudo chattr -R +i "$INSTALL_DIR/scripts/"
             [ -d "$INSTALL_DIR/icons" ] && sudo chattr -R +i "$INSTALL_DIR/icons/"
@@ -91,15 +104,15 @@ while true; do
             [ -f /usr/share/pixmaps/guardian-icon.png ] && sudo chattr +i /usr/share/pixmaps/guardian-icon.png
             [ -f /usr/share/applications/guardian.desktop ] && sudo chattr +i /usr/share/applications/guardian.desktop
 
-            echo -e "\n${green}[✔] Setup & Lockdown Complete!${nc}"
-            echo "Source code is frozen. You can now type 'guardian' from anywhere in your terminal."
+            echo -e "${green}[✔] Setup Complete!${nc}"
+            echo " 'guardian' is now a full system command. you can now type this in anywhere in the terminal to access guardian, or you can use the app icon from your app menu."
 
             echo ""
             read -n 1 -s -r -p "Press any key to return to Manager Menu..."
             ;;
 
         2)
-            echo -e "\n[*] Icon Modification Protocol Initialized..."
+            echo -e "[*] Icon Modification Protocol Initialized..."
             ICON_DIR="$INSTALL_DIR/icons"
 
             if [ ! -d "$ICON_DIR" ]; then
@@ -117,7 +130,7 @@ while true; do
                 continue
             fi
 
-            echo -e "\n${cyan}Available Icons Detected:${nc}"
+            echo -e "${cyan}Available Icons Detected:${nc}"
             for i in "${!icon_list[@]}"; do
                 echo "  $((i+1))) ${icon_list[$i]}"
             done
@@ -167,7 +180,7 @@ while true; do
             ;;
 
         3)
-            echo -e "\n${red}--- UNINSTALLATION PROTOCOL ---${nc}"
+            echo -e "${red}--- UNINSTALLATION PROTOCOL ---${nc}"
             echo "1) Soft Uninstall: Remove global hooks (Keep Vault & Source Code)"
             echo -e "${red}2) FULL NUKE: Remove everything AND PERMANENTLY DELETE THE VAULT${nc}"
             echo "c) Cancel"
@@ -181,69 +194,100 @@ while true; do
                 continue
             fi
 
+            # --- THE HUNTER-KILLER TRACKING ---
+            GLOBAL_BIN="/usr/local/bin/guardian"
+            GLOBAL_ICON="/usr/share/pixmaps/guardian-icon.png"
+            GLOBAL_DESKTOP="/usr/share/applications/guardian.desktop"
+
+            if [ -L "$GLOBAL_BIN" ]; then
+                CORE_SCRIPT=$(readlink -f "$GLOBAL_BIN")
+                CORE_DIR=$(dirname "$CORE_SCRIPT")
+            else
+                # Fallback: Search the Home directory if the hook was manually deleted
+                echo -e "${yellow}[i] Global hook missing. Scanning for Guardian directory...${nc}"
+                CORE_DIR=$(find "$HOME" -maxdepth 4 -type d -name "Guardian" 2>/dev/null | head -n 1)
+            fi
+
             if [[ "$un_choice" == "1" ]]; then
-                echo -e "\n[i] Initiating Soft Uninstall..."
-                echo "[i] Unlocking all kernel-level immutability locks..."
-                sudo chattr -R -i "$INSTALL_DIR" 2>/dev/null || true
-                sudo chattr -i /usr/share/pixmaps/guardian-icon.png 2>/dev/null || true
-                sudo chattr -i /usr/share/applications/guardian.desktop 2>/dev/null || true
+                echo -e "[i] Initiating Soft Uninstall..."
 
-                echo "[i] Removing global terminal commands..."
-                sudo rm -f /usr/local/bin/guardian
+                echo "[i] Unlocking system files..."
+                sudo chattr -i "$GLOBAL_ICON" 2>/dev/null || true
+                sudo chattr -i "$GLOBAL_DESKTOP" 2>/dev/null || true
 
-                echo "[i] Removing desktop integration..."
-                sudo rm -f /usr/share/pixmaps/guardian-icon.png
-                sudo rm -f /usr/share/applications/guardian.desktop
+                # Unlock core directory using the dynamically traced path
+                if [ -n "$CORE_DIR" ] && [ -d "$CORE_DIR" ]; then
+                     echo "[i] Unlocking core directory at: $CORE_DIR"
+                     sudo chattr -R -i "$CORE_DIR" 2>/dev/null || true
+                fi
+
+                echo "[i] Eradicating system integration..."
+                sudo rm -f "$GLOBAL_BIN"
+                sudo rm -f "$GLOBAL_ICON"
+                sudo rm -f "$GLOBAL_DESKTOP"
                 if command -v update-desktop-database >/dev/null 2>&1; then
                     sudo update-desktop-database /usr/share/applications 2>/dev/null || true
                 fi
 
-                echo -e "\n${green}[✔] Guardian System Hooks Successfully Removed.${nc}"
-                echo -e "${yellow}Note: The source files in '$INSTALL_DIR' and your Vault have NOT been deleted to prevent data loss.${nc}"
+                echo -e "${green}[✔] Guardian System Hooks Successfully Removed.${nc}"
+                echo -e "${yellow}Note: The source files and Vault in '$CORE_DIR' were preserved.${nc}"
 
                 echo ""
                 read -n 1 -s -r -p "Press any key to return to Manager Menu..."
 
             elif [[ "$un_choice" == "2" ]]; then
-                echo -e "\n${red}[!] CRITICAL WARNING: You are about to PERMANENTLY DESTROY the Guardian Vault and all secured assets.${nc}"
-                read -rp "Type 'DESTROY' to confirm total annihilation: " nuke_confirm
+                echo -e "${red}[!] CRITICAL WARNING: You are about to PERMANENTLY DESTROY the Guardian Vault and all secured assets.${nc}"
+                read -rp "Type 'destroy' to confirm total annihilation: " nuke_confirm
 
-                if [[ "$nuke_confirm" == "DESTROY" ]]; then
-                    echo -e "\n[i] Unlocking all kernel-level immutability locks..."
-                    sudo chattr -R -i "$INSTALL_DIR" 2>/dev/null || true
-                    sudo chattr -i /usr/share/pixmaps/guardian-icon.png 2>/dev/null || true
-                    sudo chattr -i /usr/share/applications/guardian.desktop 2>/dev/null || true
+                if [[ "$nuke_confirm" == "destroy" ]]; then
+                    echo "[i] Unlocking system files..."
+                    sudo chattr -i "$GLOBAL_ICON" 2>/dev/null || true
+                    sudo chattr -i "$GLOBAL_DESKTOP" 2>/dev/null || true
 
-                    echo "[i] Removing global terminal commands & desktop integration..."
-                    sudo rm -f /usr/local/bin/guardian
-                    sudo rm -f /usr/share/pixmaps/guardian-icon.png
-                    sudo rm -f /usr/share/applications/guardian.desktop
+                    if [ -n "$CORE_DIR" ] && [ -d "$CORE_DIR" ]; then
+                        echo "[i] Unlocking target directory: $CORE_DIR"
+                        sudo chattr -R -i "$CORE_DIR" 2>/dev/null || true
+                    fi
+
+                    echo "[i] Eradicating system integration..."
+                    sudo rm -f "$GLOBAL_BIN"
+                    sudo rm -f "$GLOBAL_ICON"
+                    sudo rm -f "$GLOBAL_DESKTOP"
                     if command -v update-desktop-database >/dev/null 2>&1; then
                         sudo update-desktop-database /usr/share/applications 2>/dev/null || true
                     fi
 
                     echo -e "${red}[*] Nuking core directory and Vault...${nc}"
-                    # Move to HOME so we don't crash the script by deleting the directory we are currently sitting in
-                    cd "$HOME" || exit
-                    sudo rm -rf "$INSTALL_DIR"
 
-                    echo -e "\n${green}[✔] Guardian has been completely eradicated from this node.${nc}"
+                    # --- DYNAMIC SANITY CHECK ---
+                    if [[ "$CORE_DIR" == "/" || "$CORE_DIR" == "$HOME" || "$CORE_DIR" == "$HOME/Downloads" || "$CORE_DIR" == "$HOME/Desktop" || -z "$CORE_DIR" ]]; then
+                        echo -e "${red}[CRITICAL ERROR] Target resolved to a protected system path: $CORE_DIR${nc}"
+                        echo -e "${yellow}[!] Nuke aborted to prevent catastrophic data loss.${nc}"
+                        read -n 1 -s -r -p "Press any key to exit..."
+                        exit 1
+                    fi
+
+                    # Move to HOME before deleting to avoid a shell crash
+                    cd "$HOME" || exit
+                    sudo rm -rf "$CORE_DIR"
+
+                    echo -e "${green}[✔] Guardian has been completely uninstalled from this node.${nc}"
                     sleep 1
-                    exit 0 # Exit the script entirely because the script file no longer exists
+                    exit 0
                 else
-                    echo -e "\n[*] Uninstallation aborted."
+                    echo -e "[*] Uninstallation aborted."
                     echo ""
                     read -n 1 -s -r -p "Press any key to return to Manager Menu..."
                 fi
             else
-                echo -e "\n${red}[X] Invalid selection.${nc}"
+                echo -e "${red}[X] Invalid selection.${nc}"
                 echo ""
                 read -n 1 -s -r -p "Press any key to return to Manager Menu..."
             fi
             ;;
 
         4|*)
-            echo -e "\nExiting Manager..."
+            echo -e "Exiting Manager..."
             sleep 0.5
             exit 0
             ;;

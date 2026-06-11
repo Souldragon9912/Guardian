@@ -12,20 +12,22 @@ nc=$(tput sgr0) # Reset color
 SCRIPT_DIR="$(dirname "$(realpath "$0")")"
 cd "$SCRIPT_DIR"
 
-DESKTOP_FILE="$SCRIPT_DIR/.Guardian.desktop"
-ICON_FILE="$SCRIPT_DIR/icons/Guardian.png"
-
 # ---- Fix permissions for all tools ----
 find "$SCRIPT_DIR" -type f \( -name "*.sh" -o -name "*.desktop" \) -exec chmod +x {} \;
 
-# ---- Update .desktop icon dynamically ----
-if [[ -f "$DESKTOP_FILE" ]]; then
-    if grep -q "^Icon=" "$DESKTOP_FILE"; then
-        sed -i "s|^Icon=.*|Icon=$ICON_FILE|" "$DESKTOP_FILE"
-    else
-        echo "Icon=$ICON_FILE" >> "$DESKTOP_FILE"
-    fi
+# ---- Refresh icon cache  ----
+if command -v update-desktop-database >/dev/null 2>&1; then
+    update-desktop-database "$SCRIPT_DIR" 2>/dev/null || true
 fi
+
+# ---- Update .desktop icon dynamically ----
+#if [[ -f "$DESKTOP_FILE" ]]; then
+ #   if grep -q "^Icon=" "$DESKTOP_FILE"; then
+ #       sed -i "s|^Icon=.*|Icon=$ICON_FILE|" "$DESKTOP_FILE"
+ #   else
+ #       echo "Icon=$ICON_FILE" >> "$DESKTOP_FILE"
+ #   fi
+#fi
 
 # ---- Refresh icon cache  ----
 if command -v update-desktop-database >/dev/null 2>&1; then
@@ -68,7 +70,7 @@ echo " Welcome $USER"
     echo -e "  Node:    $NODE"
     echo -e "  IP:      $USER_IP"
     echo -e "  Status:  Online  |  Uptime:  $UPTIME"
-    echo -e "  Version: 1.0     |  Name:    Aegis "
+    echo -e "  Version: 1.1     |  Name:    Aegis "
     echo -e " ==================================================== "
     echo ""
 
@@ -87,19 +89,22 @@ EXIT  : Shutdown Guardian"
 
     # --- Launch fzf Menu  ---
     # --height=12 forces the menu to use 12 lines. I put 16 to fit the new options.
-    SELECTION=$(echo "$MENU_OPTIONS" | fzf --height=16 \
+SELECTION=$(echo "$MENU_OPTIONS" | fzf --height=16 \
                                            --reverse \
                                            --info=hidden \
                                            --header="[ Use Mouse or Arrows. Double-click to select. ]" \
                                            --prompt="Select Module ❯ " \
                                            --pointer="▶" \
-                                           --color="fg+:10,bg+:0,hl:2,hl+:2,prompt:4,pointer:1")
+                                           --color="fg+:10,bg+:0,hl:2,hl+:2,prompt:4,pointer:1" \
+                                           --border-label=" ⚙️ Settings (Press Ctrl+s) " \
+                                           --border-label-pos=-2 \
+                                           --bind="ctrl-s:execute(bash ~/Guardian/scripts/G-Manager.sh)")
 
     CHOICE=$(echo "$SELECTION" | awk -F':' '{print $1}' | xargs)
 
     # --- Route the Choice ---
     case "$CHOICE" in
-        "G-SEC")  sudo ~/Guardian/scripts/G-Sec.sh; read -n 1 -s -r -p "Press any key to return...";;
+        "G-SEC")  sudo bash ~/Guardian/scripts/G-Sec.sh; read -n 1 -s -r -p "Press any key to return...";;
         "G-PASS") clear; bash ~/Guardian/scripts/G-pass.sh; read -n 1 -s -r -p "Press any key to return...";;
         "G-UFW")  sudo ~/Guardian/scripts/G-UFW.sh ;;
         "G-Vault") clear; bash ~/Guardian/scripts/G-Vault;;

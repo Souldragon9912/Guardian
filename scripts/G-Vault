@@ -46,14 +46,14 @@ while true; do
     echo -e "  Node:    $NODE"
     echo -e "  IP:      $USER_IP"
     echo -e "  Status:  Online  |  Uptime:  $UPTIME"
-    echo -e "  Version: 1.0     |  Name:    Aegis "
+    echo -e "  Version: 1.1     |  Name:    Aegis "
     echo -e " ==================================================== "
     echo ""
 
     # Sub-menu choices
     OPTIONS="📦 Package & Secure an Asset
 🔓 Extract or Unlock an Asset
-👀 Inspect Asset Contents (Preview)
+👀 View Vault Contents
 ❌ Exit Vault"
 
     SELECTION=$(echo "$OPTIONS" | fzf --height=10 --reverse --prompt="Select Action ❯ ")

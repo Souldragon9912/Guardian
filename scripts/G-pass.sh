@@ -26,6 +26,11 @@ spinner() {
     sleep 2
 }
 
+    UPTIME=$(uptime -p | sed 's/up //')
+    USER_IP=$(hostname -I | awk '{print $1}')
+    NODE=$(hostname)
+    USER=$(whoami)
+
 banner=$(
 cat <<"EOF"
  ██████╗       ██████╗  █████╗ ███████╗███████╗██╗    ██╗██████╗
@@ -45,6 +50,14 @@ echo "${yellow}"
 echo "$banner"
 echo "${nc}"
 
+echo " Welcome $USER"
+    echo -e " ==================================================== "
+    echo -e "  Node:    $NODE"
+    echo -e "  IP:      $USER_IP"
+    echo -e "  Status:  Online  |  Uptime:  $UPTIME"
+    echo -e "  Version: 1.1     |  Name:    Aegis "
+    echo -e " ==================================================== "
+    echo "  "
 echo "Welcome to G-Passwd! Here we will test your password against NIST password guidelines (SP 800-63B)"
 
 # --- User passwd check  ---
@@ -111,7 +124,7 @@ SCORE=$((len_stat + num_stat + up_stat + spec_stat))
 echo -e "${CYAN}------------------------------------${NC}"
 if [ "$SCORE" -eq 4 ]; then
     echo -e "${CHECK} RESULT: STRONG (4/4)"
-    echo "${i} PASSWD CHECK RESULT: Your password is strong enough. Keep it up! (4/4)" | tee -a Audit-log.txt
+    echo "{i} PASSWD CHECK RESULT: Your password is strong enough. Keep it up! (4/4)" | tee -a Audit-log.txt
 else
     echo -e "${CROSS} RESULT: WEAK ($SCORE/4)"
     echo "${red}""{!!} PASSWD CHECK RESULT: Your password did not meed one or more guidelines. Please make changes soon. ($SCORE/4)""${nc}" | tee -a Audit-log.txt
