@@ -51,7 +51,6 @@ echo -e "\e[0m"
 
 clear
 echo "  "
-echo "  "
 # Souldragon912
 # Ant2-2
 

@@ -3,6 +3,10 @@
 # Aegis v1
 # Ant2-2
 # Souldragon9912
+<<<<<<< HEAD
+=======
+# Copilot and Claude helped me clean up and refine some of this code.
+>>>>>>> main
 
 # Colors
 red=$(tput setaf 1)
@@ -16,6 +20,7 @@ WARN="${yellow}[!]${nc}"
 FAIL="${red}[X]${nc}"
 INFO="[i]"
 
+<<<<<<< HEAD
     UPTIME=$(uptime -p | sed 's/up //')
     USER_IP=$(hostname -I | awk '{print $1}')
     NODE=$(hostname)
@@ -27,6 +32,14 @@ GUARDIAN_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 MAIN_LOG="$GUARDIAN_ROOT/Logs/Audit-log.txt"
 HW_LOG="$GUARDIAN_ROOT/Logs/hardware-log.txt"
 
+=======
+# Figure out where Guardian is installed so logs go to the right place
+# This script lives in Guardian/scripts/ so we go up one level to find Logs/
+GUARDIAN_ROOT="$(cd "$(dirname "$0")/.." && pwd)"
+MAIN_LOG="$GUARDIAN_ROOT/Logs/Audit-log.txt"
+HW_LOG="$GUARDIAN_ROOT/Logs/hardware-log.txt"
+
+>>>>>>> main
 # Make sure the log folder exists before we try writing to it
 mkdir -p "$GUARDIAN_ROOT/Logs"
 
@@ -81,9 +94,17 @@ echo -e "  Status:  Online  |  Uptime:  $UPTIME"
 echo -e "  Version: 1.1     |  Name:    Aegis "
 echo -e " ==================================================== "
 echo ""
+<<<<<<< HEAD
 echo "Welcome to Guardian Hardware Inspection"
 echo "Here we will check your hardware and VM environment to make sure things are running properly."
 echo ""
+=======
+echo "${cyan}$banner${nc}"
+echo ""
+echo "Welcome to Guardian Hardware Inspection"
+echo "Here we will check your hardware and VM environment to make sure things are running properly."
+echo ""
+>>>>>>> main
 read -n 1 -s -r -p "Press any key to begin the inspection..."
 echo ""
 sleep 1
@@ -369,6 +390,7 @@ echo "${cyan}$banner${nc}"
 echo -e "\n----------------------------------------" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
 echo "${green}SYSTEM SUMMARY${nc}" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
 echo "----------------------------------------" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+<<<<<<< HEAD
 
 echo "Hostname        : $HOSTNAME_VAL" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
 echo "Virtualized     : $VIRT" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
@@ -388,4 +410,20 @@ echo "Full log saved to: $HW_LOG" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
 echo "
 Thank you for using Guardian Hardware!
 "
+=======
+
+echo "Hostname        : $HOSTNAME_VAL" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+echo "Virtualized     : $VIRT" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+echo "Firmware        : ${FW_FLAG^^}" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+echo "Disk Encryption : ${ENC_FLAG^^}" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+echo "TPM Chip        : ${TPM_FLAG^^}" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+echo "Drive Health    : ${DISK_HEALTH_FLAG^^}" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+echo "CPU Temp        : $CPU_TEMP" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+echo "GPU             : $GPU_INFO" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+echo "CPU Benchmark   : $CPU_BENCH" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+echo "Storage Speed   : $STORAGE_BENCH" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+echo "" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+echo "Full log saved to: $HW_LOG" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
+
+>>>>>>> main
 exit 0
