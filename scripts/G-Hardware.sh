@@ -3,7 +3,6 @@
 # Aegis v1
 # Ant2-2
 # Souldragon9912
-# Copilot and Claude helped clean up and refine some of this code.
 
 # Colors
 red=$(tput setaf 1)
@@ -16,6 +15,11 @@ CHECK="${green}[✓]${nc}"
 WARN="${yellow}[!]${nc}"
 FAIL="${red}[X]${nc}"
 INFO="[i]"
+
+    UPTIME=$(uptime -p | sed 's/up //')
+    USER_IP=$(hostname -I | awk '{print $1}')
+    NODE=$(hostname)
+    USER=$(whoami)
 
 # Figure out where Guardian is installed so logs go to the right place
 # This script lives in Guardian/scripts/ so we go up one level to find Logs/
@@ -66,8 +70,16 @@ echo "Guardian Hardware Audit - $(date)" > "$HW_LOG" 2>/dev/null
 echo "----------------------------------------" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
 
 clear
-echo ""
+echo " "
+echo " "
 echo "${cyan}$banner${nc}"
+echo " Welcome $USER"
+echo -e " ==================================================== "
+echo -e "  Node:    $NODE"
+echo -e "  IP:      $USER_IP"
+echo -e "  Status:  Online  |  Uptime:  $UPTIME"
+echo -e "  Version: 1.1     |  Name:    Aegis "
+echo -e " ==================================================== "
 echo ""
 echo "Welcome to Guardian Hardware Inspection"
 echo "Here we will check your hardware and VM environment to make sure things are running properly."
@@ -371,4 +383,9 @@ echo "Storage Speed   : $STORAGE_BENCH" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/nu
 echo "" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
 echo "Full log saved to: $HW_LOG" | tee -a "$MAIN_LOG" "$HW_LOG" 2>/dev/null
 
+
+
+echo "
+Thank you for using Guardian Hardware!
+"
 exit 0
