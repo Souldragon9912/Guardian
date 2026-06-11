@@ -1,0 +1,6 @@
+Cockpit (System UI) | 9090/tcp
+Epic Games | 7777:7784/udp 5222/tcp
+Immich (Photo Backup) | 2283/tcp
+Minecraft (Java & Bedrock) | 25565/tcp 19132/udp
+Standard Internet (Web & DNS) | 80/tcp 443/tcp 53/udp
+Steam Platform | 27015:27030/tcp 27015:27030/udp 4380/udp
