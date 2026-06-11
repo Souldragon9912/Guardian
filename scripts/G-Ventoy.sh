@@ -18,7 +18,7 @@ spinner() {
         printf " Loading Installation Assets..." "${spin:$i:1}"
         sleep 0.2
     done
-    printf "[${green}✓${nc}] Done!                  "
+    printf "[${green}✓${nc}] Done!                \n "
 }
 
     UPTIME=$(uptime -p | sed 's/up //')
@@ -56,7 +56,7 @@ echo " Welcome $USER"
     echo -e "  Node:    $NODE"
     echo -e "  IP:      $USER_IP"
     echo -e "  Status:  Online  |  Uptime:  $UPTIME"
-    echo -e "  Version: 1.0     |  Name:    Aegis "
+    echo -e "  Version: 1.1     |  Name:    Aegis "
     echo -e " ==================================================== "
     echo ""
     echo " Welcome to the ventoy tool
