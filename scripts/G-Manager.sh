@@ -96,27 +96,17 @@ while true; do
                 fi
             fi
 
-<<<<<<< HEAD:scripts/G-Manager.sh
             # --- LOCKDOWN PHASE ---
             echo "[*] Applying kernel-level immutability locks (Sniper Protocol)..."
-=======
-            # --- THE LOCKDOWN PHASE ---
-            echo "[*] Applying locks (Sniper Protocol)..."
->>>>>>> main:G-Manager.sh
             [ -d "$INSTALL_DIR/scripts" ] && sudo chattr -R +i "$INSTALL_DIR/scripts/"
             [ -d "$INSTALL_DIR/icons" ] && sudo chattr -R +i "$INSTALL_DIR/icons/"
             [ -f "$INSTALL_DIR/Guardian.desktop" ] && sudo chattr +i "$INSTALL_DIR/Guardian.desktop"
             [ -f /usr/share/pixmaps/guardian-icon.png ] && sudo chattr +i /usr/share/pixmaps/guardian-icon.png
             [ -f /usr/share/applications/guardian.desktop ] && sudo chattr +i /usr/share/applications/guardian.desktop
 
-<<<<<<< HEAD:scripts/G-Manager.sh
             echo -e "${green}[✔] Setup Complete!${nc}"
             echo " 'guardian' is now a full system command. you can now type this in anywhere in the terminal to access guardian, or you can use the app icon from your app menu."
 
-=======
-            echo -e "\n${green}[✔] Setup Complete!${nc}"
-            echo " 'guardian' is now a full system command. you can now type this in anywhere in the terminal to access Guardian, or you can use the app icon from your app menu."
->>>>>>> main:G-Manager.sh
             echo ""
             read -n 1 -s -r -p "Press any key to return to Manager Menu..."
             ;;
@@ -269,7 +259,7 @@ while true; do
 
                     echo -e "${red}[*] Nuking core directory and Vault...${nc}"
 
-                    # --- DYNAMIC SANITY CHECK ---
+                    # --- SANITY CHECK ---
                     if [[ "$CORE_DIR" == "/" || "$CORE_DIR" == "$HOME" || "$CORE_DIR" == "$HOME/Downloads" || "$CORE_DIR" == "$HOME/Desktop" || -z "$CORE_DIR" ]]; then
                         echo -e "${red}[CRITICAL ERROR] Target resolved to a protected system path: $CORE_DIR${nc}"
                         echo -e "${yellow}[!] Nuke aborted to prevent catastrophic data loss.${nc}"
@@ -277,7 +267,6 @@ while true; do
                         exit 1
                     fi
 
-                    # Move to HOME before deleting to avoid a shell crash
                     cd "$HOME" || exit
                     sudo rm -rf "$CORE_DIR"
 
