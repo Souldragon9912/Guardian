@@ -96,27 +96,17 @@ while true; do
                 fi
             fi
 
-<<<<<<< HEAD:scripts/G-Manager.sh
             # --- LOCKDOWN PHASE ---
             echo "[*] Applying kernel-level immutability locks (Sniper Protocol)..."
-=======
-            # --- THE LOCKDOWN PHASE ---
-            echo "[*] Applying locks (Sniper Protocol)..."
->>>>>>> main:G-Manager.sh
             [ -d "$INSTALL_DIR/scripts" ] && sudo chattr -R +i "$INSTALL_DIR/scripts/"
             [ -d "$INSTALL_DIR/icons" ] && sudo chattr -R +i "$INSTALL_DIR/icons/"
             [ -f "$INSTALL_DIR/Guardian.desktop" ] && sudo chattr +i "$INSTALL_DIR/Guardian.desktop"
             [ -f /usr/share/pixmaps/guardian-icon.png ] && sudo chattr +i /usr/share/pixmaps/guardian-icon.png
             [ -f /usr/share/applications/guardian.desktop ] && sudo chattr +i /usr/share/applications/guardian.desktop
 
-<<<<<<< HEAD:scripts/G-Manager.sh
             echo -e "${green}[✔] Setup Complete!${nc}"
             echo " 'guardian' is now a full system command. you can now type this in anywhere in the terminal to access guardian, or you can use the app icon from your app menu."
 
-=======
-            echo -e "\n${green}[✔] Setup Complete!${nc}"
-            echo " 'guardian' is now a full system command. you can now type this in anywhere in the terminal to access Guardian, or you can use the app icon from your app menu."
->>>>>>> main:G-Manager.sh
             echo ""
             read -n 1 -s -r -p "Press any key to return to Manager Menu..."
             ;;
