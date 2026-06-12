@@ -172,6 +172,7 @@ while true; do
                 case "$CATEGORY" in
                     "Sysadmin & General")
                         SYS_MODULES="KDE Connect (recommended to be open for plasma systems) | 1714:1764/tcp 1714:1764/udp
+GitHub & Version Control | 22/tcp 443/tcp 9418/tcp
 Standard Internet (Web & DNS) | 80/tcp 443/tcp 53/udp
 SSH (Secure Shell) | 22/tcp
 SMB (Windows File Share) | 445/tcp
