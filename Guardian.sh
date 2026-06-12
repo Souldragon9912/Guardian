@@ -98,7 +98,7 @@ SELECTION=$(echo "$MENU_OPTIONS" | fzf --height=16 \
                                            --color="fg+:10,bg+:0,hl:2,hl+:2,prompt:4,pointer:1" \
                                            --border-label=" ⚙️ Settings (Press Ctrl+s) " \
                                            --border-label-pos=-2 \
-                                           --bind="ctrl-s:execute(bash /home/brendan/Guardian/scripts/G-Manager.sh)")
+                                           --bind="ctrl-s:execute(bash ~/Guardian/scripts/G-Manager.sh)")
 
     CHOICE=$(echo "$SELECTION" | awk -F':' '{print $1}' | xargs)
 
