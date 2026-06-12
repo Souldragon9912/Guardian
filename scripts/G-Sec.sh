@@ -22,11 +22,19 @@ spinner() {
         printf " Checking..." "${spin:$i:1}"
         sleep 1
     done
-    printf "\r[✓] Done!          \n"
+    printf "\r[✓] Done!                            \n"
     sleep 2
 }
+# --------------------------------------------------------------
+ACTUAL_USER=${SUDO_USER:-$USER}
 
-LOG_FILE="/home/brendan/Guardian/Logs/Audit-log.txt"
+USER_HOME=$(getent passwd "$ACTUAL_USER" | cut -d: -f6)
+
+LOG_DIR="$USER_HOME/Guardian/Logs"
+LOG_FILE="$LOG_DIR/Audit-log.txt"
+
+mkdir -p "$LOG_DIR"
+# --------------------------------------------------------------
 
 echo -e "$CHECK Audit Complete"
 echo -e "$CROSS Vulnerability Found"
@@ -53,6 +61,13 @@ echo "$banner" > "$LOG_FILE"
 #                                                               START OF SCRIPT
 # ====================================================================================================================================
 clear
+
+# ROOT CHECK
+if [ "$EUID" -ne 0 ]; then
+  whiptail --title "Error" --msgbox "In order for the audit to continue, this must be run as root." 8 45
+  exit 1
+fi
+
 # banner paste
 echo "${blue}"
 echo "$banner"
@@ -63,19 +78,6 @@ here we will run a few tests to make sure your system is not only up-to-date, bu
 echo
 echo
 sleep 2
-
-# ROOT CHECK
-if [ "$EUID" -ne 0 ]; then
-  whiptail --title "Error" --msgbox "In order for the audit to continue, this must be run as root." 8 45
-  exit 1
-fi
-
-clear
-echo "${blue}"
-echo "$banner"
-echo "${nc}"
-  echo "welcome to the system auditor!
-here we will run a few tests to make sure your system is not only up-to-date, but safe."
 
 # --- SYSTEM IDENTITY HEADER ---
 echo "${cyan}"
@@ -99,12 +101,6 @@ echo -e "SHELL ENV  : $CURRENT_SHELL" | tee -a "$LOG_FILE"
 echo "==========================================" | tee -a "$LOG_FILE"
 sleep 1
 
-# pasword check section
-clear
-# banner paste
-echo "${blue}"
-echo "$banner"
-echo "${nc}"
 
  echo "For this next step, we will need your password. It will be used to check if it's strong enough."
 
@@ -143,22 +139,10 @@ echo "${nc}"
     echo "---------------------------------------------" >> "$LOG_FILE"
     echo "password section complete. Moving on to ssh.." >> "$LOG_FILE"
     echo "---------------------------------------------" >> "$LOG_FILE"
-
-sleep 1
-
-clear
-# banner paste
-echo "${blue}"
-echo "$banner"
-echo "${nc}"
 sleep 2
 
 # ================= SSH section ===============
-clear
-# banner paste
-echo "${blue}"
-echo "$banner"
-echo "${nc}"
+
 
 echo "[*] Auditing SSH Configuration..."
 if [ ! -f /etc/ssh/sshd_config ]; then
@@ -213,6 +197,5 @@ ss -tulpn | grep LISTEN | tee -a "$LOG_FILE"
 
 # ------------------------- CVE Section Complete --------------------------------------
 
-sleep 1
+sleep 3
 echo " Thank you for using the system auditor!"
-

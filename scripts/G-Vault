@@ -46,7 +46,7 @@ while true; do
     echo -e "  Node:    $NODE"
     echo -e "  IP:      $USER_IP"
     echo -e "  Status:  Online  |  Uptime:  $UPTIME"
-    echo -e "  Version: 1.0     |  Name:    Aegis "
+    echo -e "  Version: 1.1     |  Name:    Aegis "
     echo -e " ==================================================== "
     echo ""
 

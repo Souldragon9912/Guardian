@@ -18,7 +18,7 @@ spinner() {
         printf "[%c] Loading Installation Assets..." "${spin:$i:1}"
         sleep 0.2
     done
-    printf "[${green}✓${nc}] Done!                  "
+    printf "[${green}✓${nc}] Done!                \n "
 }
 
     UPTIME=$(uptime -p | sed 's/up //')
@@ -51,6 +51,20 @@ echo " "
 echo "${blue}"
 echo "$banner"
 echo "${nc}"
+<<<<<<< HEAD
+echo " Welcome $USER"
+    echo -e " ==================================================== "
+    echo -e "  Node:    $NODE"
+    echo -e "  IP:      $USER_IP"
+    echo -e "  Status:  Online  |  Uptime:  $UPTIME"
+    echo -e "  Version: 1.1     |  Name:    Aegis "
+    echo -e " ==================================================== "
+    echo ""
+    echo " Welcome to the ventoy tool
+    Here you can install ventoy to a thumbdrive you have or update an existing one."
+
+    # --- 2. Define Menu Options ---
+=======
 echo "Welcome $USER"
     echo -e "====================================================
     echo -e " Node:   $NODE"
@@ -62,6 +76,7 @@ echo "Welcome $USER"
     Here you can install ventoy to a thumbdrive you have or update an existing one."
     
     # --- Define Menu Options ---
+>>>>>>> main
     MENU_OPTIONS="Install Ventoy
 Update Ventoy
 EXIT : Back to Guardian"
@@ -85,7 +100,7 @@ EXIT : Back to Guardian"
         "Install Ventoy")
             clear
             echo "${blue}$banner${nc}"
-            echo -e "\n${red}⚠️  WARNING! THIS INSTALLATION WILL COMPLETELY FORMAT THE DRIVE ⚠️${nc}\n"
+            echo -e "${red}⚠️  WARNING! THIS INSTALLATION WILL COMPLETELY FORMAT THE DRIVE ⚠️${nc}\n"
 
             while true; do
                 read -rp "Are you absolutely sure you want to proceed? (y/n): " -n 1 yn
@@ -97,7 +112,7 @@ EXIT : Back to Guardian"
                 esac
             done
 
-            echo -e "\n[*] Pulling Ventoy Linux Release package from GitHub..."
+            echo -e "[*] Pulling Ventoy Linux Release package from GitHub..."
 
             # Run wget in the background so we can anchor the spinner to its process ID ($!)
             mkdir -p "$HOME/Downloads/Ventoy_interactive"

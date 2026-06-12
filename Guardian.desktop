@@ -1,10 +1,9 @@
-#!/usr/bin/env xdg-open
 [Desktop Entry]
-Version=1.1
-Name=Guardian
-Comment=System Security and Diagnostic Dashboard
+Version=1.0
+Name=Guardian Security Suite
+Comment=System Auditor and Manager
 Exec=guardian
-Icon=/home/brendan/Guardian/icons/4.png
+Icon=guardian-icon
 Terminal=true
 Type=Application
 Categories=System;Security;Utility;
