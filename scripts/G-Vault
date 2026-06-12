@@ -46,7 +46,7 @@ while true; do
     echo -e "  Node:    $NODE"
     echo -e "  IP:      $USER_IP"
     echo -e "  Status:  Online  |  Uptime:  $UPTIME"
-    echo -e "  Version: 1.1     |  Name:    Aegis "
+    echo -e "  Version: 1.0     |  Name:    Aegis "
     echo -e " ==================================================== "
     echo ""
 
@@ -74,7 +74,7 @@ while true; do
 
             if [[ "$TARGET" == *"Go Back"* || -z "$TARGET" ]]; then continue; fi
 
-            METHOD=$(echo -e "🗜️ Standard ZIP (No Password)\n🔑 Password Protected ZIP\n🛡️ GRDN AES-256 Vault (Max Security)\n⬅️ Go Back" | fzf --height=9 --reverse --prompt="Select Security Level ❯ ")
+            METHOD=$(echo -e "🗜️ Standard ZIP (No Password)\n🔑 Password Protected ZIP\n🛡️ GPG AES-256 Vault (Max Security)\n⬅️ Go Back" | fzf --height=9 --reverse --prompt="Select Security Level ❯ ")
 
             if [[ "$METHOD" == *"Go Back"* || -z "$METHOD" ]]; then continue; fi
 
