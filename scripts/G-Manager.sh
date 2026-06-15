@@ -229,6 +229,7 @@ while true; do
                     sudo update-desktop-database /usr/share/applications 2>/dev/null || true
                 fi
 
+
                 echo -e "${green}[✔] Guardian System Hooks Successfully Removed.${nc}"
                 echo -e "${yellow}Note: The source files and Vault in '$CORE_DIR' were preserved.${nc}"
 
@@ -267,9 +268,9 @@ while true; do
                         exit 1
                     fi
 
-                    cd "$HOME" || exit
-                    sudo rm -rf "$CORE_DIR"
-
+                    cd
+                    sudo rm -rf /Guardian
+sleep 2
                     echo -e "${green}[✔] Guardian has been completely uninstalled from this node.${nc}"
                     sleep 1
                     exit 0
