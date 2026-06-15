@@ -24,7 +24,7 @@ USER=${SUDO_USER:-$USER}
 USER_HOME=$(getent passwd "$USER" | cut -d: -f6)
 
 # ---------- fzf modifier ----------
-export FZF_DEFAULT_OPTS=$'--border=double
+export FZF_DEFAULT_OPTS="--border=double --color=fg:7,bg:0,hl:2,fg+:10,bg+:0,hl+:2,pointer:1,prompt:4"
   --color=dark'
 trap 'clear; echo "Guardian Deactivated."; exit' SIGINT SIGTERM
 
