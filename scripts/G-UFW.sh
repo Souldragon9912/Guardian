@@ -58,12 +58,12 @@ echo "${blue}"
 echo "$banner"
 echo "${nc}"
 echo " Welcome $USER"
-echo -e " ==================================================== "
-echo -e "  Node:    $NODE"
-echo -e "  IP:      $USER_IP"
-echo -e "  Status:  Online  |  Uptime:  $UPTIME"
-echo -e "  Version: 1.1     |  Name:    Aegis "
-echo -e " ==================================================== "
+    echo -e " ==================================================== "
+    echo -e "  Node:    $NODE"
+    echo -e "  IP:      $USER_IP"
+    echo -e "  Status:  Online  |  Uptime:  $UPTIME"
+    echo -e "  Version: 1.2     |  Name:    Aegis "
+    echo -e " ==================================================== "
 echo ""
 
 # --- Guardian Shield-Navigator v2.1 ---
@@ -172,7 +172,6 @@ while true; do
                 case "$CATEGORY" in
                     "Sysadmin & General")
                         SYS_MODULES="KDE Connect (recommended to be open for plasma systems) | 1714:1764/tcp 1714:1764/udp
-GitHub & Version Control | 22/tcp 443/tcp 9418/tcp
 Standard Internet (Web & DNS) | 80/tcp 443/tcp 53/udp
 SSH (Secure Shell) | 22/tcp
 SMB (Windows File Share) | 445/tcp
