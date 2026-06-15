@@ -2,7 +2,7 @@
 
 # --- Guardian Suite Setup Manager ---
 
-INSTALL_DIR="$(dirname "$(realpath "$0")")"
+INSTALL_DIR="$(dirname "$(dirname "$(realpath "$0")")")"
 
 # Colors
 green=$(tput setaf 2)
