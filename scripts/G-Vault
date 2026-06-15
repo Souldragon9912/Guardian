@@ -46,7 +46,7 @@ while true; do
     echo -e "  Node:    $NODE"
     echo -e "  IP:      $USER_IP"
     echo -e "  Status:  Online  |  Uptime:  $UPTIME"
-    echo -e "  Version: 1.0     |  Name:    Aegis "
+    echo -e "  Version: 1.2     |  Name:    Aegis "
     echo -e " ==================================================== "
     echo ""
 
@@ -240,7 +240,7 @@ while true; do
             read -n 1 -s -r -p "Press any key to return to Vault Menu..."
             ;;
 
-       *"Inspect"*)
+       *"View"*)
             echo -e "\n[!] Select an asset to preview without extracting:"
             TARGET_ASSET=$( { echo "⬅️ Go Back to Main Vault Menu"; find "$VAULT_DIR" -type f 2>/dev/null; } | fzf --height=12 --reverse --prompt="Select Asset to Inspect ❯ " )
 
