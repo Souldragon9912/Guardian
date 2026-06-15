@@ -191,11 +191,5 @@ echo -e "\n${cyan}[*] Identifying listening network services...${nc}"
 # -t (tcp) -u (udp) -l (listening) -p (process) -n (numeric)
 ss -tulpn | grep LISTEN | tee -a "$LOG_FILE"
 
-# ======================== CVE Check ===========================
-
-
-
-# ------------------------- CVE Section Complete --------------------------------------
-
 sleep 3
 echo " Thank you for using the system auditor!"
