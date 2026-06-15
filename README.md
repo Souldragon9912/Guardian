@@ -13,7 +13,7 @@ Guardian has a simple way to install. There is the manual way or the one-liner.
 
 
 ## One-Liner
-git clone https://github.com/Souldragon9912/Guardian.git && cd Guardian && chmod +x G-Manager.sh && ./G-Manager.sh
+git clone https://github.com/Souldragon9912/Guardian.git && cd Guardian/scripts && chmod +x G-Manager.sh && ./G-Manager.sh
 
 ## Manual Installation
 If you prefer to review the repository before deploying the suite, you can execute the setup process step-by-step:
