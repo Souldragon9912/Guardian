@@ -51,32 +51,18 @@ echo " "
 echo "${blue}"
 echo "$banner"
 echo "${nc}"
-<<<<<<< HEAD
 echo " Welcome $USER"
     echo -e " ==================================================== "
     echo -e "  Node:    $NODE"
     echo -e "  IP:      $USER_IP"
     echo -e "  Status:  Online  |  Uptime:  $UPTIME"
-    echo -e "  Version: 1.1     |  Name:    Aegis "
+    echo -e "  Version: 1.2     |  Name:    Aegis "
     echo -e " ==================================================== "
-    echo ""
-    echo " Welcome to the ventoy tool
-    Here you can install ventoy to a thumbdrive you have or update an existing one."
-
-    # --- 2. Define Menu Options ---
-=======
-echo "Welcome $USER"
-    echo -e "====================================================
-    echo -e " Node:   $NODE"
-    echo -e " IP:     $USER_IP"
-    echo -e " Status: Online  |  Uptime: $UPTIME"
-    echo -e "====================================================
     echo ""
     echo " Welcome to the ventoy tool
     Here you can install ventoy to a thumbdrive you have or update an existing one."
     
     # --- Define Menu Options ---
->>>>>>> main
     MENU_OPTIONS="Install Ventoy
 Update Ventoy
 EXIT : Back to Guardian"
